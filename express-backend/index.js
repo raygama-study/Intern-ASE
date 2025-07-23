@@ -1,4 +1,5 @@
 const express = require('express')
+const conn = require('./src/helpers/db')
 const app = express()
 const port = 3000
 

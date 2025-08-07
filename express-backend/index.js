@@ -10,6 +10,7 @@ const storiesRouter = require("./src/routes/storiesRoute")
 const reportsRouter = require("./src/routes/reportsRoute")
 const categoriesRouter = require("./src/routes/categoriesRoute")
 const commentsRouter = require("./src/routes/commentsRoute")
+const authRouter = require("./src/routes/authRoute")
 
 app.use(bodyParser.json())
 
@@ -27,6 +28,9 @@ app.use('/', categoriesRouter)
 
 //comments routes
 app.use('/', commentsRouter)
+
+//auth routes
+app.use('/', authRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello World!??!')

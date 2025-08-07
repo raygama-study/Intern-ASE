@@ -9,6 +9,7 @@ const pingRouter = require("./src/routes/pingRoute")
 const storiesRouter = require("./src/routes/storiesRoute")
 const reportsRouter = require("./src/routes/reportsRoute")
 const categoriesRouter = require("./src/routes/categoriesRoute")
+const commentsRouter = require("./src/routes/commentsRoute")
 
 app.use(bodyParser.json())
 
@@ -23,6 +24,9 @@ app.use('/', reportsRouter)
 
 //categories routes
 app.use('/', categoriesRouter)
+
+//comments routes
+app.use('/', commentsRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello World!??!')

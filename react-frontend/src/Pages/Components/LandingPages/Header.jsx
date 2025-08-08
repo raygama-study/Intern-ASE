@@ -36,7 +36,7 @@ const Header = () => {
 
       {/* Deskripsi */}
       <div className="text-center px-4">
-        <p className="font-aboreto text-[24px] leading-[100%] font-[400] font-Aboreto uppercase">
+        <p className="font-aboreto text-[24px] leading-[100%] font-[400] uppercase">
           A SAFE, ANONYMOUS SPACE TO SHARE YOUR STORY AND FIND CONNECTION THROUGH SHARED EXPERIENCES
         </p>
       </div>

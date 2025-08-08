@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react"; // pastikan kamu sudah install lucide-react
+import { ArrowLeft } from "lucide-react"; // make sure you have installed lucide-react
 
 const Headershare = () => {
   const navigate = useNavigate();

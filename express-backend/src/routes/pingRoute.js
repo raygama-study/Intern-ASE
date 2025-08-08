@@ -1,12 +1,9 @@
 const express = require('express')
 const router = express.Router()
+const response = require("../helpers/response")
 
 router.get('/ping', (req, res) => {
-  res.status(200).json({
-    message: 'pong',
-    status: 'success',
-    timestamp: new Date().toISOString()
-  })
+  response(200, "no data", "pong", res)
 })
 
 module.exports = router

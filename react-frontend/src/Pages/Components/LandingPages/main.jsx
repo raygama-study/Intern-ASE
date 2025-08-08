@@ -1,4 +1,4 @@
-// src/Components/LandingPages/Main.jsx
+// src/Pages/Components/LandingPages/main.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import FeatureCard from "../FeatureCard";

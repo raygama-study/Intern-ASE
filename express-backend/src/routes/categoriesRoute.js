@@ -1,15 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const response = require("../helpers/response")
+const categoryController = require('../controllers/categoriesController')
 
-router.get('/categories', (req, res) => {
-  response(200, `get all categories`, "success", res)
-})
+router.get('/categories', categoryController.getCategories)
 
-router.get('/categories/:id', (req,res) => {
-    const {id} = req.params
-    response(200, `get categories with id: ${id}`, "success", res)
-})
+router.get('/categories/:id', categoryController.getCategory)
 
 router.post('/categories', (req, res) => {
     const {name} = req.body

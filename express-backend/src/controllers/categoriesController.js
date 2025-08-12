@@ -1,0 +1,31 @@
+const categoryModel = require('../models/categoriesModel')
+const response = require('../helpers/response')
+
+async function getCategories(req, res){
+    try {
+        const data = await categoryModel.getAllCategories()
+        response(200, data, `get all categories`, res)
+    } catch (error){
+        console.error(error)
+        response(500, null, `failed to get categories`, res)
+    }
+}
+
+async function getCategory(req, res){
+    try{
+        const {id} = req.params
+        const data = await categoryModel.getCategoryById(id)
+        if (!data){
+            return response(404, null, `category not found`, res)
+        }
+        response(200, data, `get category with id: ${id}`,res)
+    } catch (error){
+        console.error(error)
+        response(500, null, ``,res)
+    }
+}
+
+module.exports = {
+    getCategories,
+    getCategory
+}

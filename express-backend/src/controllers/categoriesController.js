@@ -21,11 +21,23 @@ async function getCategory(req, res){
         response(200, data, `get category with id: ${id}`,res)
     } catch (error){
         console.error(error)
-        response(500, null, ``,res)
+        response(500, null, `failed to get category`, res)
+    }
+}
+
+async function createCategory(req, res){
+    try{
+        const {name} = req.body
+        data = await categoryModel.createCategory(name)
+        response(201, data, `Category created successfully`, res)
+    } catch (error){
+        console.error(error)
+        response(500, null, `failed to create category`, res)
     }
 }
 
 module.exports = {
     getCategories,
-    getCategory
+    getCategory,
+    createCategory
 }

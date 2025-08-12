@@ -7,10 +7,7 @@ router.get('/categories', categoryController.getCategories)
 
 router.get('/categories/:id', categoryController.getCategory)
 
-router.post('/categories', (req, res) => {
-    const {name} = req.body
-    response(200, `category with name: ${name} posted`, "success", res)
-})
+router.post('/categories', categoryController.createCategory)
 
 router.delete('/categories/:id', (req, res) => {
     const {id} = req.params

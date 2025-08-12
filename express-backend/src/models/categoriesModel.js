@@ -15,7 +15,17 @@ async function getCategoryById(id){
     })
 }
 
+//create category
+async function createCategory(name){
+    return prisma.categories.create({
+        data: {
+            name
+        }
+    })
+}
+
 module.exports = {
     getAllCategories,
-    getCategoryById
+    getCategoryById,
+    createCategory
 }

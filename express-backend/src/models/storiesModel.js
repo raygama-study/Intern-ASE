@@ -1,6 +1,7 @@
 const {PrismaClient} = require('../generated/prisma')
 const { connect } = require('../routes/storiesRoute')
 const prisma = new PrismaClient()
+const crypto = require('crypto')
 
 async function getAllStories(){
     return prisma.stories.findMany({
@@ -30,10 +31,12 @@ async function getStoryById(id){
 }
 
 async function createStory(content, status, categoryIds){
+    const deletionToken = crypto.randomBytes(4).toString('hex')
     return prisma.stories.create({
         data: {
             content,
             status,
+            deletion_token: deletionToken,
             story_categories: {
                 create: categoryIds.map(catId => ({
                     categories: {

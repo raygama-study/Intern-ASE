@@ -1,4 +1,5 @@
-const {PrismaClient} = require('../generated/prisma')
+const {PrismaClient} = require('../generated/prisma');
+const { put } = require('../routes/categoriesRoute');
 const prisma = new PrismaClient();
 
 //get all categories
@@ -24,8 +25,31 @@ async function createCategory(name){
     })
 }
 
+//update category
+async function updateCategory(id, name){
+    return prisma.categories.update({
+        where: {
+            id:Number(id)
+        },
+        data:{
+            name
+        }
+    })
+}
+
+//delete category
+async function deleteCategory(id){
+    return prisma.categories.delete({
+        where:{
+            id: Number(id)
+        }
+    })
+}
+
 module.exports = {
     getAllCategories,
     getCategoryById,
-    createCategory
+    createCategory,
+    updateCategory,
+    deleteCategory
 }

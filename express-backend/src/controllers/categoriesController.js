@@ -36,8 +36,32 @@ async function createCategory(req, res){
     }
 }
 
+async function updateCategory(req, res){
+    try{
+        const {id} = req.params
+        const {name} = req.body
+        data = await categoryModel.updateCategory(id, name)
+        response(200, data, `category updated successfully`, res)
+    } catch (error){
+        console.error(error)
+        response(500, null, `failed to update category`, res)
+    }
+}
+
+async function deleteCategory(req, res){
+    try{
+        const {id} = req.params
+        await categoryModel.deleteCategory(id)
+        response(200, null, `category deleted successfully`, res)
+    } catch(error){
+        response(500, null, `failed to delete category`, res)
+    }
+}
+
 module.exports = {
     getCategories,
     getCategory,
-    createCategory
+    createCategory,
+    updateCategory,
+    deleteCategory
 }

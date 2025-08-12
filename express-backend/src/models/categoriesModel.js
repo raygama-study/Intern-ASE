@@ -1,6 +1,5 @@
-const {PrismaClient} = require('../generated/prisma');
-const { put } = require('../routes/categoriesRoute');
-const prisma = new PrismaClient();
+const {PrismaClient} = require('../generated/prisma')
+const prisma = new PrismaClient()
 
 //get all categories
 async function getAllCategories(){

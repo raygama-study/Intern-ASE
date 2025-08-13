@@ -4,6 +4,9 @@ const crypto = require('crypto')
 
 async function getAllStories(){
     return prisma.stories.findMany({
+        where: {
+            status: 'posted'
+        },
         include: {
             story_categories: {
                 include: {
@@ -18,7 +21,8 @@ async function getAllStories(){
 async function getStoryById(id){
     return prisma.stories.findUnique({
         where: {
-            id: Number(id)
+            id: Number(id),
+            status: 'posted'
         },
         include: {
             story_categories: {
@@ -57,8 +61,22 @@ async function createStory(content, status, categoryIds){
     })
 }
 
+async function deleteStoryByStatus(id){
+    return prisma.stories.update({
+        where: {
+            id: Number(id),
+            status: 'posted'
+        },
+        data: {
+            status: 'deleted',
+            deleted_at: new Date(Date.now())
+        }
+    })
+}
+
 module.exports = {
     getAllStories,
     getStoryById,
-    createStory
+    createStory,
+    deleteStoryByStatus
 }

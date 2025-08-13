@@ -19,4 +19,6 @@ router.put('/stories/:id', (req, res) => {
     response(200, `story with id ${id} status changed to ${status}`, "success", res)
 })
 
+router.put('/stories/:id/delete', storyController.deleteStoryByStatus)
+
 module.exports = router

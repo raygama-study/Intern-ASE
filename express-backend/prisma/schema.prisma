@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model categories {
+  id               Int                @id @default(autoincrement())
+  name             String             @db.VarChar(100)
+  story_categories story_categories[]
+}
+
+model comment_reports {
+  id                Int         @id @default(autoincrement())
+  id_comment        Int
+  id_moderator      Int?
+  reason            String?     @db.Text
+  is_approved       Boolean?
+  is_reported_by_ai Boolean?    @default(false)
+  comments          comments    @relation(fields: [id_comment], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "comment_reports_ibfk_1")
+  moderators        moderators? @relation(fields: [id_moderator], references: [id], onUpdate: Restrict, map: "comment_reports_ibfk_2")
+
+  @@index([id_comment], map: "id_comment")
+  @@index([id_moderator], map: "id_moderator")
+}
+
+model comments {
+  id              Int               @id @default(autoincrement())
+  id_story        Int
+  content         String            @db.Text
+  status          comments_status   @default(posted)
+  comment_reports comment_reports[]
+  stories         stories           @relation(fields: [id_story], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_1")
+
+  @@index([id_story], map: "id_story")
+}
+
+model images {
+  id       Int     @id @default(autoincrement())
+  id_story Int
+  name     String  @db.VarChar(255)
+  stories  stories @relation(fields: [id_story], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "images_ibfk_1")
+
+  @@index([id_story], map: "id_story")
+}
+
+model moderators {
+  id              Int               @id @default(autoincrement())
+  username        String            @unique(map: "username") @db.VarChar(50)
+  password        String            @db.VarChar(255)
+  name            String            @db.VarChar(100)
+  comment_reports comment_reports[]
+  story_reports   story_reports[]
+}
+
+model stories {
+  id               Int                @id @default(autoincrement())
+  content          String             @db.Text
+  status           stories_status     @default(posted)
+  created_at       DateTime?          @default(now()) @db.DateTime(0)
+  deletion_token   String?            @db.VarChar(100)
+  deleted_at       DateTime?          @db.DateTime(0)
+  comments         comments[]
+  images           images[]
+  story_categories story_categories[]
+  story_reports    story_reports[]
+}
+
+model story_categories {
+  id            Int        @id @default(autoincrement())
+  id_story      Int
+  id_categories Int
+  stories       stories    @relation(fields: [id_story], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_categories_ibfk_1")
+  categories    categories @relation(fields: [id_categories], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_categories_ibfk_2")
+
+  @@index([id_categories], map: "id_categories")
+  @@index([id_story], map: "id_story")
+}
+
+model story_reports {
+  id                Int         @id @default(autoincrement())
+  id_story          Int
+  id_moderator      Int?
+  reason            String?     @db.Text
+  is_approved       Boolean?
+  is_reported_by_ai Boolean?    @default(false)
+  stories           stories     @relation(fields: [id_story], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_reports_ibfk_1")
+  moderators        moderators? @relation(fields: [id_moderator], references: [id], onUpdate: Restrict, map: "story_reports_ibfk_2")
+
+  @@index([id_moderator], map: "id_moderator")
+  @@index([id_story], map: "id_story")
+}
+
+enum stories_status {
+  posted
+  hold
+  deleted
+}
+
+enum comments_status {
+  posted
+  hold
+  deleted
+}

@@ -105,7 +105,7 @@ async function deleteStory(req, res){
     try{
         const {id} = req.params
         
-        data = await storyModel.getStoryById(id)
+        const data = await storyModel.getStoryById(id)
         if(!data){
             return response(404, null, `story not found`, res)
         }

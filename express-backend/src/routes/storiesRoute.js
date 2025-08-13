@@ -17,4 +17,6 @@ router.put('/stories/:id', storyController.updateStory)
 
 router.put('/stories/:id/delete', storyController.deleteStoryByStatus)
 
+router.delete('/stories/:id', storyController.deleteStory)
+
 module.exports = router

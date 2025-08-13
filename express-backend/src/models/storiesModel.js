@@ -86,10 +86,19 @@ async function deleteStoryByStatus(id){
     })
 }
 
+async function deleteStory(id){
+    return prisma.stories.delete({
+        where: {
+            id: Number(id)
+        }
+    })
+}
+
 module.exports = {
     getAllStories,
     getStoryById,
     createStory,
     deleteStoryByStatus,
-    updateStory
+    updateStory,
+    deleteStory
 }

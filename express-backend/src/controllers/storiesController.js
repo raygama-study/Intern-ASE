@@ -26,6 +26,30 @@ async function getStory(req, res){
     }
 }
 
+async function getPostedStories(req, res){
+    try{
+        const data = await storyModel.getAllPostedStories()
+        response(200, data, `get all stories`, res)
+    } catch(error){
+        console.error(error)
+        response(500, null, `failed to get all stories: ${error.message}`, res)
+    }
+}
+
+async function getPostedStory(req, res){
+    try{
+        const {id} = req.params
+        const data = await storyModel.getPostedStoryById(id)
+        if(!data){
+            return response(404, null, `story not found`, res)
+        }
+        response(200, data, `get story with id: ${id}`, res)
+    } catch(error){
+        console.error(error)
+        response(500, null, `failed to get story: ${error.message}`, res)
+    }
+}
+
 async function createStory(req, res){
     try{
         const {content, status, categoryIds} = req.body
@@ -81,10 +105,10 @@ async function deleteStory(req, res){
     try{
         const {id} = req.params
         
-        // data = await storyModel.getStoryById(id)
-        // if(!data){
-        //     return response(404, null, `story not found`, res)
-        // }
+        data = await storyModel.getStoryById(id)
+        if(!data){
+            return response(404, null, `story not found`, res)
+        }
         await storyModel.deleteStory(id)
         response(200, null, `story deleted successfully`, res)
     } catch(error){
@@ -96,6 +120,8 @@ async function deleteStory(req, res){
 module.exports = {
     getStories,
     getStory,
+    getPostedStories,
+    getPostedStory,
     createStory,
     deleteStoryByStatus,
     updateStory,

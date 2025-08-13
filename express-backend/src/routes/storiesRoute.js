@@ -9,7 +9,11 @@ app.use(express.json())
 
 router.get('/stories', storyController.getStories)
 
+router.get('/stories/posted', storyController.getPostedStories)
+
 router.get('/stories/:id', storyController.getStory)
+
+router.get('/stories/posted/:id', storyController.getPostedStory)
 
 router.post('/stories', upload.array('images', 4), storyController.createStory)
 

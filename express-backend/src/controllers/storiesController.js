@@ -1,5 +1,6 @@
 const storyModel = require('../models/storiesModel')
 const response = require('../helpers/response')
+const imageModel = require('../models/imagesModel')
 
 async function getStories(req, res){
     try{
@@ -29,10 +30,18 @@ async function createStory(req, res){
     try{
         const {content, status, categoryIds} = req.body
         const data = await storyModel.createStory(content, status, categoryIds)
-        response(201, data, `story created successfully`, res)
+
+        if(req.files && req.files.length > 0){
+            const saveImagesPromises = req.files.map(file => imageModel.saveImage(data.id, file.filename))
+
+            await Promise.all(saveImagesPromises)
+        }
+
+        const newData = await storyModel.getStoryById(data.id)
+        response(201, newData, `story created successfully`, res)
     } catch(error){
         console.error(error)
-        response(500, null, `failed to create story: ${error}`, res)
+        response(500, null, `failed to create story: ${error.message}`, res)
     }
 }
 

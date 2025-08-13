@@ -1,5 +1,4 @@
 const {PrismaClient} = require('../generated/prisma')
-const { connect } = require('../routes/storiesRoute')
 const prisma = new PrismaClient()
 const crypto = require('crypto')
 
@@ -10,7 +9,8 @@ async function getAllStories(){
                 include: {
                     categories: true
                 }
-            }
+            },
+            images: true
         }
     })
 }
@@ -25,7 +25,8 @@ async function getStoryById(id){
                 include: {
                     categories: true
                 }
-            }
+            },
+            images: true
         }
     })
 }
@@ -50,7 +51,8 @@ async function createStory(content, status, categoryIds){
                 include: {
                     categories: true
                 }
-            }
+            },
+            images: true
         }
     })
 }

@@ -13,11 +13,7 @@ router.get('/stories/:id', storyController.getStory)
 
 router.post('/stories', upload.array('images', 4), storyController.createStory)
 
-router.put('/stories/:id', (req, res) => {
-    const {id} = req.params
-    const {status} = req.body
-    response(200, `story with id ${id} status changed to ${status}`, "success", res)
-})
+router.put('/stories/:id', storyController.updateStory)
 
 router.put('/stories/:id/delete', storyController.deleteStoryByStatus)
 

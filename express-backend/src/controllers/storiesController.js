@@ -45,6 +45,19 @@ async function createStory(req, res){
     }
 }
 
+async function updateStory(req, res){
+    try{
+        const {id} = req.params
+        const {status} = req.body
+
+        const data = await storyModel.updateStory(id, status)
+        response(200, data, `story updated successfully`, res)
+    } catch(error){
+        console.error(error)
+        response(500, null, `failed to update story`, res)
+    }
+}
+
 async function deleteStoryByStatus(req, res){
     try{
         const {id} = req.params
@@ -68,5 +81,6 @@ module.exports = {
     getStories,
     getStory,
     createStory,
-    deleteStoryByStatus
+    deleteStoryByStatus,
+    updateStory
 }

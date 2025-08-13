@@ -61,6 +61,18 @@ async function createStory(content, status, categoryIds){
     })
 }
 
+async function updateStory(id, status){
+    return prisma.stories.update({
+        where: {
+            id: Number(id),
+            status: 'posted'
+        },
+        data: {
+            status: status
+        }
+    })
+}
+
 async function deleteStoryByStatus(id){
     return prisma.stories.update({
         where: {
@@ -78,5 +90,6 @@ module.exports = {
     getAllStories,
     getStoryById,
     createStory,
-    deleteStoryByStatus
+    deleteStoryByStatus,
+    updateStory
 }

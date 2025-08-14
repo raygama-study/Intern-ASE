@@ -4,15 +4,16 @@ const router = express.Router()
 const response = require("../helpers/response")
 const storyController = require('../controllers/storiesController')
 const upload = require('../middleware/uploadImage')
+const authMiddleware = require('../middleware/authMiddleware')
 
 app.use(express.json())
 
 //get all stories
-router.get('/stories', storyController.getStories)
+router.get('/stories', authMiddleware, storyController.getStories)
 router.get('/stories/posted', storyController.getPostedStories)
 
 //get specific story
-router.get('/stories/:id', storyController.getStory)
+router.get('/stories/:id', authMiddleware, storyController.getStory)
 router.get('/stories/posted/:id', storyController.getPostedStory)
 
 //create story

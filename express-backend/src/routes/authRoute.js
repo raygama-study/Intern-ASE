@@ -1,10 +1,12 @@
 const express = require('express')
 const router = express.Router()
-const authController = require('../controllers/authController')
+//authentication
 const authMiddleware = require('../middleware/authMiddleware')
-
+//validator
 const authValidator = require('../validators/authValidator')
 const validate = require('../middleware/validate')
+//controller
+const authController = require('../controllers/authController')
 
 router.post('/login', authValidator.loginValidator, validate, authController.login)
 

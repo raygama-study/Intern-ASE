@@ -24,6 +24,6 @@ router.put('/stories/:id', storyController.updateStory)
 
 //delete story (by status dan hard delete)
 router.put('/stories/:id/delete', storyController.deleteStoryByStatus)
-router.delete('/stories/:id', storyController.deleteStory)
+router.delete('/stories/:id', authMiddleware, storyController.deleteStory)
 
 module.exports = router

@@ -52,7 +52,7 @@ async function getPostedStory(req, res){
 
 async function createStory(req, res){
     try{
-        const {content, status, categoryIds} = req.body
+        const {content, status, categoryIds = []} = req.body
         const data = await storyModel.createStory(content, status, categoryIds)
 
         if(req.files && req.files.length > 0){

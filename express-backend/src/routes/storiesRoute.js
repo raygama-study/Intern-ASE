@@ -22,7 +22,7 @@ router.get('/stories/:id', authMiddleware, storyController.getStory)
 router.get('/stories/posted/:id', storyController.getPostedStory)
 
 //create story
-router.post('/stories', storiesValidator.storyValidator, validate, upload.array('images', 4), storyController.createStory)
+router.post('/stories', upload.array('images', 4), storyController.createStory)
 
 //update story
 router.put('/stories/:id', storiesValidator.storyValidator, validate, storyController.updateStory)

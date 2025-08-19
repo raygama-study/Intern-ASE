@@ -39,7 +39,12 @@ async function login(req, res){
             {expiresIn: '1h'}
         )
 
-        response(200, token, `login succesful`, res)
+        const data = {
+            user,
+            token: token
+        }
+
+        response(200, data, `login succesful`, res)
     } catch(error){
         response(500, null, `failed to login: ${error.message}`, res)
     }

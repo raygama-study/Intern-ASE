@@ -40,7 +40,11 @@ async function login(req, res){
         )
 
         const data = {
-            user,
+            user:{
+                id: user.id,
+                username: user.username,
+                name: user.name
+            },
             token: token
         }
 

@@ -1,7 +1,10 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 const app = express()
 const port = 3030
+
+app.use(cors({origin: 'http://localhost:5173', credentials: true}))
 
 //import routes
 const pingRouter = require("./src/routes/pingRoute")

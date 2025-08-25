@@ -1,6 +1,9 @@
 const storyModel = require('../models/storiesModel')
 const response = require('../helpers/response')
 const imageModel = require('../models/imagesModel')
+const {Filter} = require('content-checker')
+
+const filter = new Filter({openModeratorAPIKey: process.env.OPEN_MODERATOR_API_KEY})
 
 async function getStories(req, res){
     try{
@@ -53,6 +56,13 @@ async function getPostedStory(req, res){
 async function createStory(req, res){
     try{
         const {content, status, categoryIds = []} = req.body
+
+        const result = await filter.isProfaneAI(content, {provider: "google-perspective-api", checkManualProfanityList: true})
+
+        if(result.profane){
+            return response(400, null, `story contains inappropriate content`, res)
+        }
+
         const data = await storyModel.createStory(content, status, categoryIds)
 
         if(req.files && req.files.length > 0){

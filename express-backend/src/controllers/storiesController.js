@@ -55,12 +55,15 @@ async function getPostedStory(req, res){
 
 async function createStory(req, res){
     try{
-        const {content, status, categoryIds = []} = req.body
+        const {content, categoryIds = []} = req.body
+        let status = `posted`
+        let message = `story created successfully`
 
         const result = await filter.isProfaneAI(content, {provider: "google-perspective-api", checkManualProfanityList: true})
 
         if(result.profane){
-            return response(400, null, `story contains inappropriate content`, res)
+            status = `hold`
+            message = `story contains inappropriate content: ${result.type}`
         }
 
         const data = await storyModel.createStory(content, status, categoryIds)
@@ -72,7 +75,7 @@ async function createStory(req, res){
         }
 
         const newData = await storyModel.getStoryById(data.id)
-        response(201, newData, `story created successfully`, res)
+        response(201, newData, message, res)
     } catch(error){
         console.error(error)
         response(500, null, `failed to create story: ${error.message}`, res)

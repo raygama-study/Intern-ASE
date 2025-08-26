@@ -1,6 +1,7 @@
 const storyModel = require('../models/storiesModel')
 const response = require('../helpers/response')
 const imageModel = require('../models/imagesModel')
+const storyReportModel = require('../models/storyReportsModel')
 const {Filter} = require('content-checker')
 
 const filter = new Filter({openModeratorAPIKey: process.env.OPEN_MODERATOR_API_KEY})
@@ -74,6 +75,9 @@ async function createStory(req, res){
             await Promise.all(saveImagesPromises)
         }
 
+        if(result.profane){
+            await storyReportModel.createStoryReport(data.id, message, true)
+        }
         const newData = await storyModel.getStoryById(data.id)
         response(201, newData, message, res)
     } catch(error){

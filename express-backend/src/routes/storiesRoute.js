@@ -16,6 +16,7 @@ app.use(express.json())
 //get all stories
 router.get('/stories', authMiddleware, storyController.getStories)
 router.get('/stories/posted', storyController.getPostedStories)
+router.get('/stories/held', authMiddleware, storyController.getHeldStories)
 
 //get specific story
 router.get('/stories/:id', authMiddleware, storyController.getStory)

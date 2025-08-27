@@ -22,7 +22,7 @@ async function login(req, res){
 
         const user = await userModel.findByUsername(username)
         if(!user){
-            return response(404, null, `user not found`, res)
+            return response(401, null, `invalid username or password`, res)
         }
 
         const validPassword = await bcrypt.compare(password, user.password)

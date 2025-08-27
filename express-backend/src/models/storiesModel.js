@@ -64,6 +64,22 @@ async function getStoryById(id){
     })
 }
 
+async function getHeldStories(){
+    return prisma.stories.findMany({
+        where: {
+            status: `hold`
+        },
+        include: {
+            story_categories: {
+                include: {
+                    categories: true
+                }
+            },
+            images: true
+        }
+    })
+}
+
 async function createStory(content, status, categoryIds){
     const deletionToken = crypto.randomBytes(4).toString('hex')
     return prisma.stories.create({
@@ -128,6 +144,7 @@ module.exports = {
     getStoryById,
     getAllPostedStories,
     getPostedStoryById,
+    getHeldStories,
     createStory,
     deleteStoryByStatus,
     updateStory,

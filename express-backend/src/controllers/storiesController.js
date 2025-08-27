@@ -54,6 +54,16 @@ async function getPostedStory(req, res){
     }
 }
 
+async function getHeldStories(req, res){
+    try{
+        const data = await storyModel.getHeldStories()
+        response(200, data, `get held stories`, res)
+    } catch(error){
+        console.error(error)
+        response(500, null, `failed to get story: ${error.message}`, res)
+    }
+}
+
 async function createStory(req, res){
     try{
         const {content, categoryIds = []} = req.body
@@ -139,6 +149,7 @@ module.exports = {
     getStory,
     getPostedStories,
     getPostedStory,
+    getHeldStories,
     createStory,
     deleteStoryByStatus,
     updateStory,

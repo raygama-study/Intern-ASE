@@ -2,10 +2,10 @@ const {PrismaClient} = require('@prisma/client')
 const prisma = new PrismaClient()
 const crypto = require('crypto')
 
-async function getAllPostedStories(){
+async function getAllStoriesStatus(status){
     return prisma.stories.findMany({
         where: {
-            status: 'posted'
+            status: status
         },
         include: {
             story_categories: {
@@ -18,11 +18,11 @@ async function getAllPostedStories(){
     })
 }
 
-async function getPostedStoryById(id){
+async function getStoryByIdStatus(id, status){
     return prisma.stories.findFirst({
         where: {
             id: Number(id),
-            status: 'posted'
+            status: status
         },
         include: {
             story_categories: {
@@ -64,10 +64,10 @@ async function getStoryById(id){
     })
 }
 
-async function getHeldStories(){
-    return prisma.stories.findMany({
+async function getStoryByToken(token) {
+    return prisma.stories.findFirst({
         where: {
-            status: `hold`
+            deletion_token: token
         },
         include: {
             story_categories: {
@@ -142,9 +142,9 @@ async function deleteStory(id){
 module.exports = {
     getAllStories,
     getStoryById,
-    getAllPostedStories,
-    getPostedStoryById,
-    getHeldStories,
+    getAllStoriesStatus,
+    getStoryByIdStatus,
+    getStoryByToken,
     createStory,
     deleteStoryByStatus,
     updateStory,

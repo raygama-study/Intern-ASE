@@ -32,7 +32,7 @@ async function getStory(req, res){
 
 async function getPostedStories(req, res){
     try{
-        const data = await storyModel.getAllPostedStories()
+        const data = await storyModel.getAllStoriesStatus(`posted`)
         response(200, data, `get all stories`, res)
     } catch(error){
         console.error(error)
@@ -43,7 +43,7 @@ async function getPostedStories(req, res){
 async function getPostedStory(req, res){
     try{
         const {id} = req.params
-        const data = await storyModel.getPostedStoryById(id)
+        const data = await storyModel.getStoryByIdStatus(id, `posted`)
         if(!data){
             return response(404, null, `story not found`, res)
         }
@@ -56,7 +56,7 @@ async function getPostedStory(req, res){
 
 async function getHeldStories(req, res){
     try{
-        const data = await storyModel.getHeldStories()
+        const data = await storyModel.getAllStoriesStatus(`hold`)
         response(200, data, `get held stories`, res)
     } catch(error){
         console.error(error)

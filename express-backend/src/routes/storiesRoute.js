@@ -25,11 +25,11 @@ router.get('/stories/posted/:id', storyController.getPostedStory)
 //create story
 router.post('/stories', upload.array('images', 4), storiesValidator.storyValidator, validate, storyController.createStory)
 
+//delete story (by status dan hard delete)
+router.put('/stories/delete', storiesValidator.deleteStoryValidator, validate, storyController.deleteStoryByStatus)
+router.delete('/stories/:id', authMiddleware, storyController.deleteStory)
+
 //update story
 router.put('/stories/:id', storiesValidator.storyValidator, validate, storyController.updateStory)
-
-//delete story (by status dan hard delete)
-router.put('/stories/:id/delete', storyController.deleteStoryByStatus)
-router.delete('/stories/:id', authMiddleware, storyController.deleteStory)
 
 module.exports = router

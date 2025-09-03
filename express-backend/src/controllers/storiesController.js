@@ -111,16 +111,13 @@ async function updateStory(req, res){
 
 async function deleteStoryByStatus(req, res){
     try{
-        const {id} = req.params
-        const deletionToken = req.body?.deletionToken;
-        if (!deletionToken) {
-            return response(400, null, `missing deletion token`, res);
+        const {deletionToken} = req.body
+
+        const data = await storyModel.getStoryByToken(deletionToken)
+        if(!data || data.status != `posted`){
+            return response(404, null, `story not found`, res)
         }
-        const data = await storyModel.getStoryById(id)
-        if(data.deletion_token != deletionToken){
-            return response(401, null, `invalid deletion token`, res)
-        }
-        await storyModel.deleteStoryByStatus(id)
+        await storyModel.deleteStoryByStatus(data.id)
         response(200, null, `story deleted successfully`, res)
     } catch(error){
         console.error(error)

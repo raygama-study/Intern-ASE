@@ -13,6 +13,12 @@ const storyValidator = [
         .isArray().withMessage('categoryIds must be an array')
 ]
 
+const deleteStoryValidator = [
+    body('deletionToken')
+        .notEmpty().withMessage('deletion token is required')
+]
+
 module.exports = {
-    storyValidator
+    storyValidator,
+    deleteStoryValidator
 }

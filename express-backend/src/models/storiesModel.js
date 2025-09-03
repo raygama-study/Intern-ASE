@@ -81,7 +81,7 @@ async function getStoryByToken(token) {
 }
 
 async function createStory(content, status, categoryIds){
-    const deletionToken = crypto.randomBytes(4).toString('hex')
+    const deletionToken = crypto.randomBytes(8).toString('hex')
     return prisma.stories.create({
         data: {
             content,

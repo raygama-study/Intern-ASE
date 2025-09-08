@@ -19,17 +19,18 @@ router.get('/stories/posted', storyController.getPostedStories)
 router.get('/stories/held', authMiddleware, storyController.getHeldStories)
 
 //get specific story
-router.get('/stories/:id', authMiddleware, storyController.getStory)
+router.get('/stories/held/:id', authMiddleware, storyController.getStory)
 router.get('/stories/posted/:id', storyController.getPostedStory)
+router.get('/stories/delete', storyController.getStoryByToken)
 
 //create story
 router.post('/stories', upload.array('images', 4), storiesValidator.storyValidator, validate, storyController.createStory)
 
 //delete story (by status dan hard delete)
-router.put('/stories/delete', storiesValidator.deleteStoryValidator, validate, storyController.deleteStoryByStatus)
-router.delete('/stories/:id', authMiddleware, storyController.deleteStory)
+router.put('/stories/delete', storiesValidator.deleteStoryValidator, validate, storyController.deleteStoryByToken)
+router.delete('/stories/:id/delete', authMiddleware, storyController.deleteStory)
 
 //update story
-router.put('/stories/:id', storiesValidator.storyValidator, validate, storyController.updateStory)
+router.put('/stories/:id/edit', storiesValidator.storyValidator, validate, storyController.updateStory)
 
 module.exports = router

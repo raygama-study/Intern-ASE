@@ -64,6 +64,19 @@ async function getHeldStories(req, res){
     }
 }
 
+async function getStoryByToken(req, res) {
+    try{
+        const {deletionToken} = req.body
+        const data = await storyModel.getStoryByToken(deletionToken)
+        if(!data || data.status != `posted`){
+            return response(404, null, `story not found`, res)
+        }
+        response(200, data, `get story with token: ${deletionToken}`, res)
+    } catch(error){
+        response(500, null, `failed to get story: ${error.message}`, res)
+    }
+}
+
 async function createStory(req, res){
     try{
         const {content, categoryIds = []} = req.body
@@ -109,7 +122,7 @@ async function updateStory(req, res){
     }
 }
 
-async function deleteStoryByStatus(req, res){
+async function deleteStoryByToken(req, res){
     try{
         const {deletionToken} = req.body
 
@@ -147,8 +160,9 @@ module.exports = {
     getPostedStories,
     getPostedStory,
     getHeldStories,
+    getStoryByToken,
     createStory,
-    deleteStoryByStatus,
+    deleteStoryByToken,
     updateStory,
     deleteStory
 }

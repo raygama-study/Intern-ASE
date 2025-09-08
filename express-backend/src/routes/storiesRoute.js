@@ -24,7 +24,7 @@ router.get('/stories/posted/:id', storyController.getPostedStory)
 router.get('/stories/delete', storyController.getStoryByToken)
 
 //create story
-router.post('/stories', upload.array('images', 4), storiesValidator.storyValidator, validate, storyController.createStory)
+router.post('/stories', upload.upload.array('images', 4), upload.removeExifMiddleware, storiesValidator.storyValidator, validate, storyController.createStory)
 
 //delete story (by status dan hard delete)
 router.put('/stories/delete', storiesValidator.deleteStoryValidator, validate, storyController.deleteStoryByToken)

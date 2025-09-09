@@ -2,30 +2,21 @@ const express = require('express')
 const router = express.Router()
 const response = require("../helpers/response")
 
-router.get('/comments', (req, res) => {
-  response(200, `get all comments`, "success", res)
-})
+// //get all comments
+// router.get('/comments', )
+// router.get('/stories/:idStr/comments', )
 
-router.get('/stories/:id/comments', (req,res) => {
-    const {id} = req.params
-    response(200, `get all comments for stories with id: ${id}`, "success", res)
-})
+// //get specific comment
+// router.get('/comments/held/:id', )
+// router.get('/stories/:idStr/comments/:idCom', )
 
-router.get('/comments/:id', (req, res) => {
-    const {id} = req.params
-    response(200, `get comment with id: ${id}`, "success", res)
-})
+// //create comment
+// router.post('/stories/:idStr/comments', )
 
-router.post('/stories/:id/comments', (req, res) => {
-    const {id} = req.params
-    const {content} = req.body
-    response(200, `posted comment with content: ${content} for story with id: ${id}`, "success", res)
-})
+// //delete comment
+// router.put('/stories/:idStr/comments/:idCom')
 
-router.put('/comments/:id', (req, res) => {
-    const {id} = req.params
-    const {status} = req.body
-    response(200, `comment with id: ${id} status changed to: ${status}`, "success", res)
-})
+// //update comment
+// router.put('/comments/:id', )
 
 module.exports = router

@@ -1,18 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import { UserRound, KeyRound, Eye, EyeOff } from "lucide-react";
-import moderator from "/src/assets/images/moderator.png";
+import moderator from "/src/assets/images/user-admin.png";
+import user from "/src/assets/images/bx_user1.png";
+import userErr from "/src/assets/images/bx_user.png";
+import pass from "/src/assets/images/password1.png";
+import passErr from "/src/assets/images/password.png";
+
 
 export default function LoginModal({ open, onClose, onLogin }) {
   const dialogRef = useRef(null);
   const [showPwd, setShowPwd] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null)
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e?.preventDefault();
     setError("");
-
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:3030/login", {
         method: "POST",
@@ -21,27 +27,27 @@ export default function LoginModal({ open, onClose, onLogin }) {
       });
 
       const json = await res.json();
-      console.log(json);
       const ok = json?.payload?.statusCode === 200;
-      if (!ok) throw new Error(json?.payload?.message || "Login failed");
+      if (!ok) throw new Error(json?.payload?.message || "Invalid username or password");
 
       const token = json?.payload?.datas?.token;
-      const user = json?.payload?.datas?.user;
+      const user  = json?.payload?.datas?.user;
       if (!token) throw new Error("Token missing in response");
 
-      // store safely (do NOT store password)
       localStorage.setItem("vu:token", token);
       localStorage.setItem("vu:user", JSON.stringify(user));
       localStorage.setItem("vu:username", user?.username || username);
 
-      onLogin?.({ token, user });   // let parent route to dashboard, etc.
+      onLogin?.({ token, user });
       onClose?.();
     } catch (err) {
       setError(err.message || "Network error");
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
-  // lock scroll + focus saat modal dibuka
+  // lock scroll + focus
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -50,7 +56,7 @@ export default function LoginModal({ open, onClose, onLogin }) {
     return () => { document.body.style.overflow = prev; };
   }, [open]);
 
-  // ESC untuk close
+  // ESC to close
   useEffect(() => {
     const onKey = (e) => open && e.key === "Escape" && onClose?.();
     window.addEventListener("keydown", onKey);
@@ -58,6 +64,15 @@ export default function LoginModal({ open, onClose, onLogin }) {
   }, [open, onClose]);
 
   if (!open) return null;
+
+  const isError = Boolean(error);
+  const errorLine =
+    "border-red-500 shadow-[0_0_10px_rgba(255,59,48,.55)]"; // glow merah
+  const baseLine =
+    "border-[#E6E0DA] focus-within:border-[#C65C33] focus-within:shadow-[0_0_8px_rgba(198,92,51,.35)]";
+  const iconError =
+    "text-red-500 drop-shadow-[0_0_6px_rgba(255,59,48,.5)]";
+  const iconBase = "text-[#C8BEB5]";
 
   return (
     <div
@@ -67,24 +82,22 @@ export default function LoginModal({ open, onClose, onLogin }) {
       aria-labelledby="moderator-login-title"
       onClick={onClose}
     >
-      {/* Backdrop blur + dim */}
+      {/* backdrop */}
       <div className="absolute inset-0 backdrop-blur-md bg-black/30" />
 
-      {/* Wrapper agar bisa scroll kalau layar kecil */}
       <div
         className="relative h-full w-full overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mx-auto max-w-[720px] px-4 sm:px-6 py-10">
-          {/* Kartu utama */}
           <div
             ref={dialogRef}
             tabIndex={-1}
             className="rounded-2xl bg-background shadow-xl outline-none"
             style={{ boxShadow: "0px 10px 28px rgba(0,0,0,0.20)" }}
           >
-            <div className="px-8 pt-10 pb-8">
-              {/* Ikon di atas judul */}
+            <form onSubmit={handleSubmit} className="px-8 pt-10 pb-8">
+              {/* ikon header */}
               <img
                 src={moderator}
                 alt=""
@@ -99,18 +112,21 @@ export default function LoginModal({ open, onClose, onLogin }) {
                 MODERATOR LOGIN
               </h2>
 
-              {/* Card form putih */}
-              <div className="bg-white rounded-[14px] border border-[#E6E0DA] shadow-[0_6px_16px_rgba(0,0,0,0.08)] p-6">
+              {/* kartu form */}
+              <div className="bg-white rounded-[14px] p-6">
                 {/* Username */}
                 <label className="block">
                   <span className="sr-only">Username</span>
-                  <div className="flex items-center gap-3 border-b border-[#E6E0DA] focus-within:border-[#C65C33] transition">
-                    <UserRound className="w-5 h-5 text-[#C8BEB5]" />
+                  <div
+                    className={`flex items-center gap-3 border-b transition ${isError ? errorLine : baseLine}`}
+                  >
+                   <img src={isError ? userErr : user} alt="" className="w-5 h-5" />
                     <input
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       placeholder="Username"
                       className="w-full py-3 outline-none font-abhaya text-[16px] bg-transparent"
+                      aria-invalid={isError}
                     />
                   </div>
                 </label>
@@ -118,19 +134,23 @@ export default function LoginModal({ open, onClose, onLogin }) {
                 {/* Password */}
                 <label className="block mt-5">
                   <span className="sr-only">Password</span>
-                  <div className="flex items-center gap-3 border-b border-[#E6E0DA] focus-within:border-[#C65C33] transition">
-                    <KeyRound className="w-5 h-5 text-[#C8BEB5]" />
+                  <div
+                    className={`flex items-center gap-3 border-b transition ${isError ? errorLine : baseLine}`}
+                  >
+                    <img src={isError ? passErr : pass} alt="" className="w-5 h-5" />
+
                     <input
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Password"
                       type={showPwd ? "text" : "password"}
                       className="w-full py-3 outline-none font-abhaya text-[16px] bg-transparent"
+                      aria-invalid={isError}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPwd((s) => !s)}
-                      className="p-1 text-[#C8BEB5] hover:text-[#9c9289]"
+                      className={`p-1 ${isError ? "text-red-500" : "text-[#C8BEB5]"} hover:opacity-80`}
                       aria-label={showPwd ? "Hide password" : "Show password"}
                     >
                       {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -138,20 +158,30 @@ export default function LoginModal({ open, onClose, onLogin }) {
                   </div>
                 </label>
 
+                {/* Error message */}
+                {isError ? (
+                  <p className="text-[15px] mt-4 text-red-600">
+                    Enter your username and password correctly.
+                  </p>
+                ) : (
+                  <div className="mt-4" />
+                )}
+
                 {/* Tombol Login */}
                 <div className="mt-6 flex justify-center">
                   <button
-                    type="button"
-                    onClick={() => handleSubmit()}
+                    type="submit"
+                    disabled={loading}
                     className="min-w-[120px] h-[44px] rounded-[10px] bg-[#C65C33] text-white px-6
-                               shadow-[0_8px_22px_rgba(198,92,51,0.28)] hover:opacity-95 font-abhaya"
+                               shadow-[0_8px_22px_rgba(198,92,51,0.28)] hover:opacity-95 font-abhaya
+                               disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Login
+                    {loading ? "Signing in…" : "Login"}
                   </button>
                 </div>
               </div>
 
-              {/* Cancel kecil */}
+              {/* Cancel */}
               <div className="mt-4 flex justify-center">
                 <button
                   type="button"
@@ -161,7 +191,7 @@ export default function LoginModal({ open, onClose, onLogin }) {
                   Cancel
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>

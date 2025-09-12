@@ -3,46 +3,31 @@ import FilterTabs from "./FilterTabs";
 import Guidelines from "./Guidelines";
 import StoryCard from "./StoryCard";
 import ContentWarningCard from "./ContentWarningCard";
-import Leaf1 from "/src/assets/images/daun1.png";
-import Leaf2 from "/src/assets/images/daun2.png";
-import Leaf3 from "/src/assets/images/daun3.png";
-import Leaf4 from "/src/assets/images/daun4.png";
-import Leaf5 from "/src/assets/images/daun5.png";
-import Leaf6 from "/src/assets/images/daun6.png";
 
-// contoh data (ganti dengan API nanti)
+// leaves
+import Leaf1 from "/src/assets/images/daun1.png";
+import Leaf2 from "/src/assets/images/daun1.png";
+import Leaf3 from "/src/assets/images/daun3.png";
+import Leaf4 from "/src/assets/images/daun6.png";
+
+// sample data
 const SAMPLE = [
-  {
-    kind: "story",
+  { kind: "story",
     text:
       "Today I realized that healing isn’t linear. Some days I feel strong and empowered, and other days I can barely get out of bed. But I’m learning that both states are valid parts of my journey. To anyone reading this who might be struggling - your pace is valid, your feelings are valid, and you’re not alone.",
-    age: "1d ago",
-    safe: true,
-  },
-  {
-    kind: "cw",
-    topics: "Mental health struggles, therapy",
-    text:
-      "I started therapy and it’s been hard but helpful. Some sessions bring up difficult memories, so I take breaks and ground myself after.",
-    age: "5d ago",
-    safe: false,
-  },
-  {
-    kind: "cw",
-    topics: "Childhood trauma, healing",
-    text:
-      "I’m slowly learning to set boundaries with family. It isn’t easy, but it’s helping me feel safer and more in control.",
-    age: "5d ago",
-    safe: false,
-  },
-  {
-    kind: "cw",
-    topics: "Grief, loss",
-    text:
-      "I miss them every day. Some days the grief is heavy; other days I find small moments of light. Both are okay.",
-    age: "5d ago",
-    safe: false,
-  },
+    age: "1d ago", safe: true },
+  { kind: "story",
+    text:"I celebrated a small victory today - I said 'no' to something that would have drained my energy, and I didn't feel guilty about it. Boundaries are still new to me, but each time I practice them, they get a little easier. Your time and energy are precious. It's okay to protect them.",
+    age: "5d ago", safe: true },
+  { kind: "cw", topics: "Mental health struggles, therapy",
+    text: "I started therapy and it’s been hard but helpful. Some sessions bring up difficult memories, so I take breaks and ground myself after.",
+    age: "5d ago", safe: false },
+  { kind: "cw", topics: "Childhood trauma, healing",
+    text: "I’m slowly learning to set boundaries with family. It isn’t easy, but it’s helping me feel safer and more in control.",
+    age: "5d ago", safe: false },
+  { kind: "cw", topics: "Grief, loss",
+    text: "I miss them every day. Some days the grief is heavy; other days I find small moments of light. Both are okay.",
+    age: "5d ago", safe: false },
 ];
 
 export default function Main() {
@@ -53,7 +38,6 @@ export default function Main() {
     [safeOnly]
   );
 
-  // Saat All Stories: tampilkan satu safe story dulu lalu CW, seperti mockup
   const ordered = useMemo(() => {
     if (safeOnly) return stories;
     const normal = stories.filter((s) => s.kind === "story");
@@ -62,19 +46,48 @@ export default function Main() {
   }, [stories, safeOnly]);
 
   return (
-    <main className="font-abhaya">
-      <img src={Leaf1} alt="" aria-hidden="true" className="pointer-events-none select-none absolute z-0 w-[clamp(48px,9vw,104px)] top-[clamp(16px,4vw,30px)] left-[clamp(8px,3vw,20px)] rotate-[1deg]" />
-            <img src={Leaf2} alt="" aria-hidden="true" className="pointer-events-none select-none absolute z-0 w-[clamp(56px,12vw,140px)] top-[clamp(120px,22vw,180px)] left-[clamp(6px,2vw,10px)] -rotate-[125deg]" />
-            <img src={Leaf3} alt="" aria-hidden="true" className="pointer-events-none select-none absolute z-0 w-[clamp(56px,12vw,140px)] top-[clamp(18px,4vw,30px)] right-[clamp(10px,3.5vw,20px)] rotate-[125deg]" />
-            <img src={Leaf4} alt="" aria-hidden="true" className="pointer-events-none select-none absolute z-0 w-[clamp(48px,9vw,104px)] top-[clamp(160px,30vw,240px)] right-[clamp(12px,4vw,25px)] -rotate-[5deg]" />
-            <img src={Leaf5} alt="" aria-hidden="true" className="pointer-events-none select-none absolute z-0 w-[clamp(48px,9vw,104px)] top-[clamp(320px,45vw,520px)] left-[clamp(12px,3.5vw,25px)] -rotate-[7deg]" />
-            <img src={Leaf6} alt="" aria-hidden="true" className="pointer-events-none select-none absolute z-0 w-[clamp(60px,14vw,155px)] top-[clamp(340px,47vw,540px)] right-[clamp(14px,4vw,35px)] -rotate-[15deg]" />
-      
+    <main className="relative isolate font-abhaya overflow-visible">
+      {/* Leaves layer (behind content) */}
+      <div className="pointer-events-none absolute inset-0 -z-10 select-none">
+        {/* top-left */}
+        <img
+          src={Leaf1}
+          alt=""
+          aria-hidden
+          draggable="false"
+          className="absolute w-[78px] sm:w-[90px] md:w-[130px] -top-[100px] -left-[100px] rotate-[90deg]"
+        />
+        {/* top-right */}
+        <img
+          src={Leaf3}
+          alt=""
+          aria-hidden
+          draggable="false"
+          className="absolute w-[76px] sm:w-[90px] md:w-[120px] -top-[100px] -right-[80px] -rotate-[50deg]"
+        />
+        {/* mid-left */}
+        <img
+          src={Leaf2}
+          alt=""
+          aria-hidden
+          draggable="false"
+          className="absolute w-[80px] sm:w-[92px] md:w-[130px] bottom-[130px] -left-[80px] rotate-[50deg]"
+        />
+        {/* bottom-right */}
+        <img
+          src={Leaf4}
+          alt=""
+          aria-hidden
+          draggable="false"
+          className="absolute w-[82px] sm:w-[96px] md:w-[155px] bottom-[130px] -right-[90px] -rotate-[175deg]"
+        />
+      </div>
+
       <FilterTabs safeOnly={safeOnly} onChange={setSafeOnly} />
       <Guidelines />
 
-      {/* daftar stories */}
-      <section className="mb-6">
+      {/* list */}
+      <section className="mb-6 relative z-10">
         {ordered.map((s, i) =>
           s.kind === "cw" ? (
             <ContentWarningCard key={i} topics={s.topics} text={s.text} age={s.age} />
@@ -104,20 +117,23 @@ export default function Main() {
       <h2 className="font-aboreto text-center text-[22px] md:text-[26px] mt-10 mb-5 tracking-wide">
         NEED SUPPORT?
       </h2>
-      <div className="grid gap-20 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <div
-          className="rounded-[10px] px-6 py-5"
-          style={{ backgroundColor: "#dfcb5ab4", boxShadow: "0px 4px 8px 0px rgba(0,0,0,0.10)" }}
+          className="rounded-[10px] px-6 py-5 text-center"
+          style={{ backgroundColor: "#F6C88D", boxShadow: "0px 4px 4px 0px #00000040)" }}
+          // background: #F6C88D;
+          // box-shadow: 0px 4px 4px 0px #00000040;
+
         >
-          <p className="font-abhaya font-bold text-center ">Crisis Text Line:</p>
-          <p className="font-abhaya text-center ">Text HOME to 741741</p>
+          <p className="font-abhaya font-bold">Crisis Text Line:</p>
+          <p className="font-abhaya">Text HOME to 741741</p>
         </div>
         <div
-          className="rounded-[10px] px-6 py-5"
-          style={{ backgroundColor: "#dfcb5ab4", boxShadow: "0px 4px 8px 0px rgba(0,0,0,0.10)" }}
+          className="rounded-[10px] px-6 py-5 text-center"
+          style={{ backgroundColor: "#F6C88D", boxShadow: "0px 4px 4px 0px #00000040" }}
         >
-          <p className="font-abhaya font-bold text-center">National Suicide Prevention Lifeline:</p>
-          <p className="font-abhaya text-center ">Call or text 988</p>
+          <p className="font-abhaya font-bold">National Suicide Prevention Lifeline:</p>
+          <p className="font-abhaya">Call or text 988</p>
         </div>
       </div>
     </main>

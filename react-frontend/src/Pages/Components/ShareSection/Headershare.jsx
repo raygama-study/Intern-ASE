@@ -1,3 +1,4 @@
+// src/Pages/Components/ShareSection/Headershare.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -6,9 +7,9 @@ const Headershare = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="w-full bg-background py-6 px-4 md:px-12 flex flex-col gap-4 md:gap-6">
-      {/* Top Row */}
-      <div className="flex justify-between items-center">
+    <header className="w-full bg-background pt-3 md:pt-4 pb-3 md:pb-4 px-4 md:px-12">
+      {/* Top row */}
+      <div className="flex justify-between items-center mb-3 md:mb-4">
         <button
           type="button"
           onClick={() => navigate("/")}
@@ -18,7 +19,6 @@ const Headershare = () => {
           Back to home
         </button>
 
-        {/* Quick Exit — primary palette */}
         <button
           type="button"
           onClick={() => navigate("/")}
@@ -28,9 +28,9 @@ const Headershare = () => {
         </button>
       </div>
 
-      {/* Title & Subtitle */}
-      <div className="text-center px-2">
-        <h1 className="font-aboreto text-[36px] md:text-[44px] leading-tight mb-2">
+      {/* Title & subtitle */}
+      <div className="text-center px-2 -mt-1 md:-mt-2">
+        <h1 className="font-aboreto text-[40px] md:text-[52px] leading-[1.1] mb-9">
           SHARE YOUR STORY
         </h1>
         <p className="font-abhaya text-[16px] md:text-[18px] text-darkText leading-snug">

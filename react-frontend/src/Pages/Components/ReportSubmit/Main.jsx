@@ -8,7 +8,8 @@ export default function Main({ token }) {
         className="rounded-[12px] shadow-lg px-4 sm:px-6 md:px-10 py-6 sm:py-8 md:py-10"
         style={{
           // gradient palet: atas → bawah (pakai 8-digit hex dari kamu)
-          backgroundImage: "linear-gradient(180deg, #fddb7fff 0%, #df7f47ff 100%)",
+          backgroundImage: "linear-gradient(180deg, rgba(248, 178, 89, 0.8) 0%, rgba(217, 111, 50, 0.8) 100%)",
+          // background: linear-gradient(180deg, rgba(248, 178, 89, 0.8) 0%, rgba(217, 111, 50, 0.8) 100%);
           boxShadow: "0px 4px 8px 0px rgba(0,0,0,0.15)",
         }}
       >
@@ -33,7 +34,7 @@ export default function Main({ token }) {
         </div>
 
         {/* Deskripsi */}
-        <p className="text-center mx-auto mb-8 leading-relaxed max-w-[min(90vw,900px)] px-2">
+        <p className="text-center md:text-[19px] mx-auto mb-8 leading-relaxed max-w-[min(90vw,875px)] px-2">
           THANK YOU FOR SHARING YOUR STORY. IT WILL BE REVIEWED BY OUR MODERATION TEAM AND
           PUBLISHED WITHIN 24-48 HOURS IF APPROVED.
         </p>

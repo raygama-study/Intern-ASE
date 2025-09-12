@@ -60,7 +60,7 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
             <div className="mb-[32px] flex items-start justify-between">
               {/* 614×60, gap 23 */}
               <div className="flex items-center gap-[23px] w-[614px] h-[60px]">
-                <img src={attention} alt="" aria-hidden="true" className="w-7 h-7 select-none" />
+                <img src={attention} alt="" aria-hidden="true" className="w-10 h-10 select-none" />
                 <h2
                   id="consent-title"
                   className="font-aboreto text-[32px] md:text-[36px] leading-tight text-darkText"
@@ -109,16 +109,16 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
 
             {/* Crisis box (1035 total width incl. padding) */}
             <div
-              className="w-full max-w-[1035px] box-border mx-auto min-h-[140px] rounded-[10px]
-                         px-[50px] py-[40px] mb-8"
+              className="w-full max-w-[1035px] box-border mx-auto min-h-[100px] rounded-[10px]
+                         px-[50px] py-[40px] mb-7"
               style={{
-                backgroundColor: "#ebab3477",               // oranye palet
+                backgroundColor: "#F8B25999",               // background: #F8B25999;
                 boxShadow: "0px 4px 4px 0px #00000040",
               }}
             >
               <div className="flex h-full w-full items-start gap-4">
-                <img src={attention} alt="" aria-hidden="true" className="w-6 h-6 mt-1 select-none" />
-                <p className="font-abhaya text-[14px] md:text-[15px] text-darkText">
+                <img src={attention} alt="" aria-hidden="true" className="w-10 h-10 mt- select-none" />
+                <p className="font-abhaya text-[14px] md:text-[16px] text-darkText text-center">
                   <span className="font-semibold">Crisis Support:</span> If you're in immediate danger, please contact
                   emergency services or a crisis helpline immediately. This platform is for sharing experiences, not
                   emergency support.
@@ -128,6 +128,16 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
 
             {/* Actions: SUBMIT kiri (filled), CANCEL kanan (outline) */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              {/* Cancel (outline, 301 × 67, p:18/36) */}
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-[301px] h-[67px] rounded-[10px] border border-[#C65C33]
+                           px-[36px] py-[18px] text-[#C65C33] font-abhaya hover:bg-white/50"
+              >
+                Cancel
+              </button>
+              
               {/* Submit (filled, 297 × 63, p:16/20) */}
               <button
                 type="button"
@@ -139,15 +149,7 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
                 Submit My Stories
               </button>
 
-              {/* Cancel (outline, 301 × 67, p:18/36) */}
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-[301px] h-[67px] rounded-[10px] border border-[#C65C33]
-                           px-[36px] py-[18px] text-[#C65C33] font-abhaya hover:bg-white/50"
-              >
-                Cancel
-              </button>
+              
             </div>
           </div>
         </div>

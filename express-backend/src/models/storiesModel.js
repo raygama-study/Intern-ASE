@@ -13,7 +13,8 @@ async function getAllStoriesStatus(status){
                     categories: true
                 }
             },
-            images: true
+            images: true,
+            comments: true
         }
     })
 }
@@ -30,7 +31,8 @@ async function getStoryByIdStatus(id, status){
                     categories: true
                 }
             },
-            images: true
+            images: true,
+            comments: true
         }
     })
 }
@@ -43,7 +45,8 @@ async function getAllStories(){
                     categories: true
                 }
             },
-            images: true
+            images: true,
+            comments: true
         }
     })
 }
@@ -59,7 +62,8 @@ async function getStoryById(id){
                     categories: true
                 }
             },
-            images: true
+            images: true,
+            comments: true
         }
     })
 }

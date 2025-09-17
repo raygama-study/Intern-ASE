@@ -29,6 +29,13 @@ async function createComment(req, res) {
     try{
         const {content} = req.body
         const {idStr} = req.params
+
+        const result = await filter.isProfaneAI(content, {provider: "google-perspective-api", checkManualProfanityList: true})
+
+        if(result.profane){
+            return response(400, null, `comment contains inappropriate content: ${result.type}`,res)
+        }
+
         const data = await commentModel.createComment(content, idStr, `posted`)
 
         response(201, data, `comment created successfully`, res)

@@ -1,20 +1,21 @@
+// src/Pages/Components/Moderator/Sidebar.jsx
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Menu,
-  ClipboardList,
-  ShieldAlert,
   History,
   Settings,
   LogOut,
 } from "lucide-react";
 import LogoIcon from "/src/assets/images/material-symbols_voice-over-off-rounded.png";
+import moderation from "/src/assets/images/shield.png";
+import review from "/src/assets/images/reviewStory.png";
 
 export default function Sidebar() {
   const navigate = useNavigate();
 
   const sidebarBaseItem =
-    "flex items-center gap-3 rounded-[10px] px-4 py-3 font-abhaya transition";
+    "flex items-center gap-3 rounded-[10px] px-4 py-3 font-abhaya text-[16px] md:text-[17px] transition"; 
   const activeItem =
     "bg-[#C65C33] text-white shadow-[0_6px_16px_rgba(198,92,51,0.25)]";
   const idleItem =
@@ -56,17 +57,17 @@ export default function Sidebar() {
         </NavLink>
 
         <NavLink to="/moderator/queue" className={linkClass}>
-          <ClipboardList className="w-5 h-5" />
+          <img src={moderation} alt="" className="w-5 h-5" />
           Moderation Queue
         </NavLink>
 
         <NavLink to="/moderator/emergency" className={linkClass}>
-          <ShieldAlert className="w-5 h-5" />
-          Emergency case
+          <History className="w-5 h-5" />
+          Emergency Case
         </NavLink>
 
         <NavLink to="/moderator/history" className={linkClass}>
-          <History className="w-5 h-5" />
+          <img src={review} alt="" className="w-5 h-5" />
           Review History
         </NavLink>
 
@@ -85,6 +86,6 @@ export default function Sidebar() {
         <LogOut className="w-5 h-5" />
         Log out
       </button>
-    </aside>
-  );
+    </aside>
+  );
 }

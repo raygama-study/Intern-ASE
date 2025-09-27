@@ -15,7 +15,6 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
   const [checked, setChecked] = useState(items.map(() => false));
   const allChecked = checked.every(Boolean);
 
-  // reset + focus + lock scroll
   useEffect(() => {
     if (open) {
       setChecked(items.map(() => false));
@@ -26,7 +25,6 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
     }
   }, [open]);
 
-  // esc to close
   useEffect(() => {
     const onKey = (e) => open && e.key === "Escape" && onClose?.();
     window.addEventListener("keydown", onKey);
@@ -45,7 +43,6 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
       aria-labelledby="consent-title"
       onClick={onClose}
     >
-      {/* wrapper scroll + top padding */}
       <div className="h-full w-full overflow-y-auto">
         <div
           className="mx-auto max-w-[1100px] px-4 sm:px-6 pt-6 sm:pt-12 pb-10"
@@ -58,7 +55,6 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
           >
             {/* Header */}
             <div className="mb-[32px] flex items-start justify-between">
-              {/* 614×60, gap 23 */}
               <div className="flex items-center gap-[23px] w-[614px] h-[60px]">
                 <img src={attention} alt="" aria-hidden="true" className="w-10 h-10 select-none" />
                 <h2
@@ -80,17 +76,16 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
               )}
             </div>
 
-            {/* Description (max 906 × ~66) */}
+            {/* Description */}
             <p className="font-abhaya text-base text-darkText/90 max-w-[906px] mb-6">
               Before sharing your story, please confirm your understanding of how this platform works:
             </p>
 
-            {/* Checklist (994 × 250) */}
+            {/* Checklist */}
             <ul className="w-full sm:w-[994px] min-h-[250px] space-y-5 mb-8">
               {items.map((text, i) => (
                 <li key={i}>
                   <label htmlFor={`consent-${i}`} className="flex items-start gap-4 cursor-pointer">
-                    {/* circular checkbox */}
                     <span className="mt-1 grid h-7 w-7 place-content-center rounded-full border-2 border-[#C65C33]">
                       <input
                         id={`consent-${i}`}
@@ -107,12 +102,12 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
               ))}
             </ul>
 
-            {/* Crisis box (1035 total width incl. padding) */}
+            {/* Crisis box – PAKAI #F8B25999 */}
             <div
               className="w-full max-w-[1035px] box-border mx-auto min-h-[100px] rounded-[10px]
                          px-[50px] py-[40px] mb-7"
               style={{
-                backgroundColor: "#F8B25999",               // background: #F8B25999;
+                backgroundColor: "#F8B25999",
                 boxShadow: "0px 4px 4px 0px #00000040",
               }}
             >
@@ -126,9 +121,8 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
               </div>
             </div>
 
-            {/* Actions: SUBMIT kiri (filled), CANCEL kanan (outline) */}
+            {/* Actions */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              {/* Cancel (outline, 301 × 67, p:18/36) */}
               <button
                 type="button"
                 onClick={onClose}
@@ -137,8 +131,7 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
               >
                 Cancel
               </button>
-              
-              {/* Submit (filled, 297 × 63, p:16/20) */}
+
               <button
                 type="button"
                 onClick={() => allChecked && onConfirm?.()}
@@ -148,8 +141,6 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
               >
                 Submit My Stories
               </button>
-
-              
             </div>
           </div>
         </div>

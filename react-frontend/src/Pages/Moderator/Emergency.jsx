@@ -1,24 +1,30 @@
-// src/Pages/Moderator/Emergency.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../Components/Moderator/Sidebar";
 import NoticeBar from "../Components/Moderator/NoticeBar";
 import EmergencyBanner from "../Components/Moderator/EmergencyBanner";
 import EmergencyCaseCard from "../Components/Moderator/EmergencyCaseCard";
+import { fetchEmergencyStories } from "../../utils/api";
+import { fromNow } from "../../utils/time";
 
 export default function Emergency() {
-  // contoh data 1 kasus (nanti bisa ganti dari API)
-  const CASES = [
-    {
-      text:
-        "Living with chronic depression has been challenging. Some days I struggle to get out of bed and feel completely overwhelmed by simple tasks. I often think about ending it all...",
-      time: "4 hours ago",
-      tags: [
-        { label: "Potential suicide risk", tone: "danger" },
-        { label: "Depression", tone: "warn" },
-        { label: "Emergency", tone: "danger" },
-      ],
-    },
-  ];
+  const [cases, setCases] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  async function load() {
+    try {
+      setLoading(true);
+      const data = await fetchEmergencyStories();
+      setCases(Array.isArray(data) ? data : []);
+    } catch {
+      setCases([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-darkText flex">
@@ -34,15 +40,26 @@ export default function Emergency() {
             EMERGENCY CASES
           </h2>
           <p className="text-[#C65C33]/80 mt-1">
-            1 cases requiring immediate attention
+            {loading ? "Loading…" : `${cases.length} cases requiring immediate attention`}
           </p>
         </div>
 
         <EmergencyBanner />
 
-        {CASES.map((c, i) => (
-          <EmergencyCaseCard key={i} {...c} />
-        ))}
+        {loading ? (
+          <p className="font-abhaya">Loading…</p>
+        ) : cases.length === 0 ? (
+          <p className="font-abhaya">No emergency cases.</p>
+        ) : (
+          cases.map((c) => (
+            <EmergencyCaseCard
+              key={c.id}
+              text={c.content}
+              time={c.created_at ? fromNow(c.created_at) : ""}
+              tags={[{ label: "Emergency", tone: "danger" }]}
+            />
+          ))
+        )}
 
         <div className="mt-8">
           <NoticeBar />

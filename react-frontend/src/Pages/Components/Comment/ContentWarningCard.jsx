@@ -9,7 +9,7 @@ export default function ContentWarningCard({ topics, text, age }) {
     <article
       className="bg-white rounded-[10px] border border-[#E6E0DA] px-4 py-4 md:px-5 md:py-5 mb-6"
     >
-      {/* Warning bar */}
+      {/* Warning bar – pakai baris aslimu */}
       <div
         className="rounded-[8px] px-4 py-3 flex items-center justify-between"
         style={{ backgroundColor: "rgba(198,92,51,0.08)", border: "1px solid #C65C33" }}

@@ -4,7 +4,7 @@ import ThemeIcon from "/src/assets/images/moon.png";
 import LogoIcon from "/src/assets/images/material-symbols_voice-over-off-rounded.png";
 import moderator from "/src/assets/images/moderator.png";
 
-const Header = ({ onOpenLogin }) => {
+const Header = ({ onOpenLogin, onToggleTheme, isDark }) => {
   return (
     <header className="bg-background text-darkText w-full px-6 py-6 md:py-8">
       {/* Top bar */}
@@ -12,15 +12,18 @@ const Header = ({ onOpenLogin }) => {
         {/* Left controls */}
         <div className="flex gap-3">
           <button
-            className="w-[60px] h-[60px] rounded-[12px] bg-background border border-[#C65C33]/20 flex items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+            className="w-[60px] h-[60px] rounded-[12px] bg-background border border-brand-700/20 flex items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
             aria-label="Sound"
             type="button"
           >
             <img src={SoundIcon} alt="" className="w-6 h-6" />
           </button>
+
+          {/* Theme toggle */}
           <button
-            className="w-[60px] h-[60px] rounded-[12px] bg-background border border-[#C65C33]/20 flex items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
-            aria-label="Theme"
+            onClick={onToggleTheme}
+            className="w-[60px] h-[60px] rounded-[12px] bg-background border border-brand-700/20 flex items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             type="button"
           >
             <img src={ThemeIcon} alt="" className="w-6 h-6" />
@@ -35,9 +38,8 @@ const Header = ({ onOpenLogin }) => {
             onClick={onOpenLogin}
             aria-label="Moderator login"
             className="shrink-0 w-[46px] h-[46px] md:w-[52px] md:h-[52px]
-                       rounded-[12px] bg-[#C65C33]
-                       shadow-[0_10px_22px_rgba(198,92,51,0.28)]
-                       hover:opacity-95 flex items-center justify-center"
+                       rounded-[12px] bg-[#C75D2C]
+                       shadow-brand hover:opacity-95 flex items-center justify-center"
           >
             <img
               src={moderator}
@@ -48,8 +50,8 @@ const Header = ({ onOpenLogin }) => {
 
           {/* Quick Exit */}
           <button
-            className="font-abhaya bg-[#C65C33] text-white px-5 py-2 rounded-[10px]
-                       shadow-[0_8px_22px_rgba(198,92,51,0.28)] hover:opacity-95"
+            className="font-abhaya bg-brand-700 text-white px-5 py-2 rounded-[10px]
+                       shadow-brand hover:opacity-95"
             type="button"
           >
             Quick Exit

@@ -1,30 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Sidebar from "../Components/Moderator/Sidebar";
 import ReviewCard from "../Components/Moderator/ReviewCard";
 import NoticeBar from "../Components/Moderator/NoticeBar";
+import { fetchReviewedStories } from "../../utils/api";
+import { fromNow } from "../../utils/time";
 
 export default function History() {
-  // data contoh – ganti dengan data API nanti
-  const REVIEWS = [
-    {
-      text:
-        "I want to share my experience with workplace harassment that happened over several months. It affected my mental health significantly and I felt I had nowhere to turn…",
-      time: "2 hours ago",
-      tags: ["Workplace Harassment", "Mental Health"],
-      status: "Approved",
-      note:
-        "Well-written, provides valuable perspective on workplace harassment.",
-    },
-    {
-      text:
-        "After years of domestic violence, I finally found the courage to leave. The healing process has been difficult but I want others to know there is hope…",
-      time: "2 hours ago",
-      tags: ["Workplace Harassment", "Mental Health"],
-      status: "Approved",
-      note:
-        "Inspiring recovery story, appropriate for publication.",
-    },
-  ];
+  const [searchParams] = useSearchParams();
+  const storyId = searchParams.get("storyId");
+
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  async function load() {
+    try {
+      setLoading(true);
+      const data = await fetchReviewedStories();
+      let arr = Array.isArray(data) ? data : [];
+
+      if (storyId) {
+        arr = arr.filter((x) => String(x.id) === String(storyId));
+      }
+      setReviews(arr);
+    } catch {
+      setReviews([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+  }, [storyId]);
 
   return (
     <div className="min-h-screen bg-background text-darkText flex">
@@ -39,38 +47,33 @@ export default function History() {
           <h2 className="font-aboreto text-[22px] md:text-[26px] tracking-wide">
             REVIEW HISTORY
           </h2>
+
+          {storyId && (
+            <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-[#C65C33] text-[#C65C33] px-3 py-1 text-sm">
+              Filtered by Story ID: <span className="font-semibold">{storyId}</span>
+            </div>
+          )}
         </div>
 
-        {/* Filter bar */}
-        <div className="flex flex-wrap gap-3 mb-5">
-          <select
-            className="h-[40px] rounded-[10px] border border-[#E6E0DA] bg-white px-3 font-abhaya"
-            defaultValue="all"
-          >
-            <option value="all">All Reviews</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-            <option value="pending">Pending</option>
-          </select>
-
-          <select
-            className="h-[40px] rounded-[10px] border border-[#E6E0DA] bg-white px-3 font-abhaya"
-            defaultValue="week"
-          >
-            <option value="today">Today</option>
-            <option value="week">This week</option>
-            <option value="month">This month</option>
-          </select>
-        </div>
-
-        {/* list */}
         <section>
-          {REVIEWS.map((r, i) => (
-            <ReviewCard key={i} {...r} />
-          ))}
+          {loading ? (
+            <p className="font-abhaya">Loading…</p>
+          ) : reviews.length === 0 ? (
+            <p className="font-abhaya">No history found.</p>
+          ) : (
+            reviews.map((r) => (
+              <ReviewCard
+                key={r.id}
+                text={r.content}
+                time={r.created_at ? fromNow(r.created_at) : ""}
+                tags={r.tags || []}
+                status={r.status === "deleted" ? "Rejected" : "Approved"}
+                note={r.note || ""}
+              />
+            ))
+          )}
         </section>
 
-        {/* notice */}
         <div className="mt-8">
           <NoticeBar />
         </div>

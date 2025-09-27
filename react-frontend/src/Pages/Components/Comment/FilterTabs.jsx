@@ -1,4 +1,3 @@
-// FilterTabs (compact)
 export default function FilterTabs({ safeOnly, onChange }) {
   return (
     <div className="mt-3 mb-6">
@@ -10,8 +9,8 @@ export default function FilterTabs({ safeOnly, onChange }) {
           className={`h-[32px] px-4 rounded-[8px] font-abhaya text-[13px] leading-none
                       justify-self-center sm:justify-self-start transition
                       ${safeOnly
-                        ? "bg-[#C65C33] text-white border border-[#C65C33] hover:opacity-95"
-                        : "bg-transparent text-[#C65C33] border border-[#C65C33] hover:bg-[#C65C33]/10"}`}
+                        ? "bg-brand-700 text-white border border-brand-700 hover:opacity-95 shadow-brand"
+                        : "bg-transparent text-brand-700 border border-brand-700 hover:bg-brand-700/10"}`}
         >
           Safe Content Only
         </button>
@@ -23,8 +22,8 @@ export default function FilterTabs({ safeOnly, onChange }) {
           className={`h-[32px] px-4 rounded-[8px] font-abhaya text-[13px] leading-none
                       justify-self-center sm:justify-self-end transition
                       ${!safeOnly
-                        ? "bg-[#C65C33] text-white border border-[#C65C33] hover:opacity-95"
-                        : "bg-transparent text-[#C65C33] border border-[#C65C33] hover:bg-[#C65C33]/10"}`}
+                        ? "bg-brand-700 text-white border border-brand-700 hover:opacity-95 shadow-brand"
+                        : "bg-transparent text-brand-700 border border-brand-700 hover:bg-brand-700/10"}`}
         >
           All Stories
         </button>

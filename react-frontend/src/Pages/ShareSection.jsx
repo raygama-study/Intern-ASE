@@ -1,35 +1,55 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import Headershare from "./Components/ShareSection/Headershare";
-import Main from "./Components/ShareSection/mainshare";
+import MainShare from "./Components/ShareSection/mainshare";
 import ValidationSection from "./Components/ValidationSection/validationSection";
+import { BACKEND_URL } from "../config";
 
 export default function ShareSection() {
   const navigate = useNavigate();
-  const [openConsent, setOpenConsent] = useState(false);
-  const [draftStory, setDraftStory] = useState("");
 
-  function handleReviewAndSubmit(text) {
-    setDraftStory(text);
+  const [openConsent, setOpenConsent] = useState(false);
+  const [storyText, setStoryText] = useState("");
+  const [images, setImages] = useState([]);
+  const [categoryIds, setCategoryIds] = useState([]);
+
+  function handleReviewAndSubmit(text, pickedFiles = [], pickedCats = []) {
+    setStoryText(text);
+    setImages(pickedFiles);
+    setCategoryIds(pickedCats);
     setOpenConsent(true);
   }
 
-  function handleConfirm() {
-    setOpenConsent(false);
-    navigate("/report-submit");
+  async function submitToBackend() {
+    const fd = new FormData();
+    fd.append("content", storyText);
+    (categoryIds || []).forEach((id) => fd.append("categoryIds", id));
+    (images || []).forEach((f) => fd.append("images", f));
+
+    const res = await fetch(`${BACKEND_URL}/stories`, { method: "POST", body: fd });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.payload?.message || "Failed to submit story");
+
+    const data = json?.payload?.datas;
+    const token = data?.deletion_token || "";
+    navigate("/report-submit", { state: { token } });
   }
 
   return (
-    <div className="relative bg-background text-darkText overflow-x-clip">
-      <div className="max-w-[1100px] min-h-screen mx-auto px-4 md:px-8 pt-4 md:pt-6 pb-10">
+    <div className="relative bg-background text-darkText overflow-hidden min-h-screen">
+      <div className="max-w-[1100px] mx-auto px-4 md:px-8 py-6">
         <Headershare />
-        <Main onReviewAndSubmit={handleReviewAndSubmit} />
+        <MainShare onReviewAndSubmit={handleReviewAndSubmit} />
       </div>
 
       <ValidationSection
         open={openConsent}
         onClose={() => setOpenConsent(false)}
-        onConfirm={handleConfirm}
+        onConfirm={async () => {
+          try { await submitToBackend(); } catch (e) { alert(e.message); }
+          setOpenConsent(false);
+        }}
       />
     </div>
   );

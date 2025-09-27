@@ -1,28 +1,17 @@
 import React from "react";
-import checklist from "/src/assets/images/Vector.png"; // pastikan file & kapitalisasi benar
+import checklist from "/src/assets/images/Vector.png";
 
 export default function Main({ token }) {
   return (
     <main className="font-abhaya">
       <div
-        className="rounded-[12px] shadow-lg px-4 sm:px-6 md:px-10 py-6 sm:py-8 md:py-10"
-        style={{
-          // gradient palet: atas → bawah (pakai 8-digit hex dari kamu)
-          backgroundImage: "linear-gradient(180deg, rgba(248, 178, 89, 0.8) 0%, rgba(217, 111, 50, 0.8) 100%)",
-          // background: linear-gradient(180deg, rgba(248, 178, 89, 0.8) 0%, rgba(217, 111, 50, 0.8) 100%);
-          boxShadow: "0px 4px 8px 0px rgba(0,0,0,0.15)",
-        }}
+        className="rounded-[12px] px-4 sm:px-6 md:px-10 py-6 sm:py-8 md:py-10 shadow-token"
+        style={{ background: "linear-gradient(180deg, #A84F1A 17.79%, #D96F32 100%)" }}
       >
-        {/* Judul + ikon cek — aman di semua lebar */}
         <div className="relative w-fit mx-auto mb-5 pr-12 md:pr-[67px]">
-          <h1
-            className="font-aboreto text-center leading-tight md:leading-[60px] tracking-wide
-                       text-[clamp(26px,4.2vw,40px)]"
-          >
+          <h1 className="font-aboreto text-center text-white leading-tight md:leading-[60px] tracking-wide text-[clamp(26px,4.2vw,40px)]">
             STORY SUBMITTED
           </h1>
-
-          {/* Ikon di kanan judul, center vertikal */}
           <img
             src={checklist}
             alt=""
@@ -33,17 +22,15 @@ export default function Main({ token }) {
           />
         </div>
 
-        {/* Deskripsi */}
-        <p className="text-center md:text-[19px] mx-auto mb-8 leading-relaxed max-w-[min(90vw,875px)] px-2">
+        <p className="text-center text-white md:text-[19px] mx-auto mb-8 leading-relaxed max-w-[min(90vw,875px)] px-2">
           THANK YOU FOR SHARING YOUR STORY. IT WILL BE REVIEWED BY OUR MODERATION TEAM AND
           PUBLISHED WITHIN 24-48 HOURS IF APPROVED.
         </p>
 
-        {/* Token box */}
         <div className="bg-background rounded-[10px] px-3 sm:px-5 py-5 sm:py-7 w-full max-w-[900px] mx-auto">
           <p className="text-center mb-3 sm:mb-4">Your Deletion Token:</p>
           <div className="flex justify-center">
-            <code className="bg-[#E6E0DA] text-darkText rounded-md px-3 py-2 tracking-wide inline-block break-all">
+            <code className="bg-[#F8B25940] text-darkText rounded-md px-3 py-2 tracking-wide inline-block break-all">
               {token}
             </code>
           </div>

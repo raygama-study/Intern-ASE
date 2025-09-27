@@ -20,7 +20,7 @@ export default function Header() {
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="bg-[#C65C33] text-white text-sm font-abhaya px-4 py-1.5 rounded-[6px] hover:opacity-95"
+          className="bg-brand-700 text-white text-sm font-abhaya px-4 py-1.5 rounded-[6px] hover:opacity-95 shadow-brand"
         >
           Quick Exit
         </button>

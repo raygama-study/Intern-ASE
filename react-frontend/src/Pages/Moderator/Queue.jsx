@@ -1,7 +1,9 @@
 // src/Pages/Moderator/Queue.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../Components/Moderator/Sidebar";
 import QueueItem from "../Components/Moderator/QueueItem";
+import { fetchHeldStories, updateStoryStatus } from "../../utils/api";
+import { fromNow } from "../../utils/time";
 
 function NoticeBar() {
   return (
@@ -12,35 +14,77 @@ function NoticeBar() {
   );
 }
 
-const SAMPLE = [
-  {
-    excerpt:
-      "Living with chronic depression has been challenging. Some days I struggle to get out of bed and feel completely overwhelmed by simple tasks. I often think about ending it all...",
-    timeAgo: "4 hours ago",
-    tags: [
-      { label: "Potential suicide risk", tone: "danger" },
-      { label: "Depression", tone: "soft" },
-      { label: "Emergency", tone: "danger" },
-    ],
-  },
-  {
-    excerpt:
-      "I want to share my experience with workplace harassment that happened over several months. It affected my mental health significantly and I felt I had nowhere to turn...",
-    timeAgo: "6 hours ago",
-    tags: [
-      { label: "Mental Health" },
-      { label: "Workplace Harassment" },
-    ],
-  },
-  {
-    excerpt:
-      "After years of domestic violence, I finally found the courage to leave. The healing process has been difficult but I want others to know there is hope...",
-    timeAgo: "8 hours ago",
-    tags: [],
-  },
-];
-
 export default function ModeratorQueue() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  async function load() {
+    try {
+      setLoading(true);
+      const data = await fetchHeldStories(); // auth required
+      // Simpan data penting untuk PUT validator
+      const mapped = (data || []).map((s) => ({
+        id: s.id,
+        content: s.content,
+        categoryIds: Array.isArray(s.categoryIds) ? s.categoryIds : [],
+        timeAgo: s.created_at ? fromNow(s.created_at) : "",
+        tags: [{ label: "Held" }],
+      }));
+      setItems(mapped);
+    } catch (e) {
+      console.error("Failed to load held stories:", e);
+      alert(e.message || "Failed to load held stories");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  async function handleApprove(item) {
+    try {
+      await updateStoryStatus(item.id, {
+        content: item.content,
+        categoryIds: item.categoryIds,
+        status: "posted",
+      });
+      await load();
+    } catch (e) {
+      console.error("Approve failed:", e);
+      alert(e.message || "Approve failed");
+    }
+  }
+
+  async function handleReject(item) {
+    try {
+      await updateStoryStatus(item.id, {
+        content: item.content,
+        categoryIds: item.categoryIds,
+        status: "deleted",
+      });
+      await load();
+    } catch (e) {
+      console.error("Reject failed:", e);
+      alert(e.message || "Reject failed");
+    }
+  }
+
+  async function handleEscalate(item) {
+    try {
+      await updateStoryStatus(item.id, {
+        content: item.content,
+        categoryIds: item.categoryIds,
+        status: "emergency",
+      });
+      await load();
+    } catch (e) {
+      console.error("Escalate failed:", e);
+      alert(e.message || "Escalate failed");
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background text-darkText flex">
       {/* Sidebar */}
@@ -61,18 +105,24 @@ export default function ModeratorQueue() {
             MODERATION QUEUE
           </h2>
 
-          {SAMPLE.map((it, i) => (
-            <QueueItem
-              key={i}
-              excerpt={it.excerpt}
-              timeAgo={it.timeAgo}
-              tags={it.tags}
-              onApprove={() => console.log("approve", i)}
-              onReject={() => console.log("reject", i)}
-              onEscalate={() => console.log("escalate", i)}
-              onHistory={() => console.log("history", i)}
-            />
-          ))}
+          {loading ? (
+            <p className="font-abhaya">Loading…</p>
+          ) : items.length === 0 ? (
+            <p className="font-abhaya">No held stories.</p>
+          ) : (
+            items.map((it) => (
+              <QueueItem
+                key={it.id}
+                excerpt={it.content}
+                timeAgo={it.timeAgo}
+                tags={it.tags}
+                onApprove={() => handleApprove(it)}
+                onReject={() => handleReject(it)}
+                onEscalate={() => handleEscalate(it)}
+                onHistory={() => console.log("history", it.id)}
+              />
+            ))
+          )}
         </div>
 
         <NoticeBar />

@@ -7,7 +7,6 @@ import Footer from "./Components/ReportSubmit/Footer";
 
 function useDeletionToken() {
   const { state } = useLocation();
-  // pakai token dari state kalau ada; kalau tidak, generate untuk tampilan
   return useMemo(() => {
     if (state?.token) return state.token;
     const chars = "abcdefghjkmnpqrstuvwxyz23456789";
@@ -27,7 +26,7 @@ export default function ReportSubmit() {
         <Header />
         <Main token={token} />
         <Footer
-          onReadStories={() => navigate("/comment")}   // ganti ke route list cerita kamu
+          onReadStories={() => navigate("/comment")}
           onReturnHome={() => navigate("/")}
         />
       </div>

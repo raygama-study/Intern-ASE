@@ -1,7 +1,7 @@
 const storyModel = require('../models/storiesModel')
 const response = require('../helpers/response')
 const imageModel = require('../models/imagesModel')
-const storyReportModel = require('../models/storyReportsModel')
+const profaneModel = require('../models/profanesModel')
 const {Filter} = require('content-checker')
 
 const filter = new Filter({openModeratorAPIKey: process.env.OPEN_MODERATOR_API_KEY})
@@ -80,17 +80,19 @@ async function getStoryByToken(req, res) {
 async function createStory(req, res){
     try{
         const {content, categoryIds = []} = req.body
-        let status = `posted`
-        let message = `story created successfully`
+        let data
+        let message
 
         const result = await filter.isProfaneAI(content, {provider: "google-perspective-api", checkManualProfanityList: true})
 
         if(result.profane){
-            status = `hold`
+            data = await storyModel.createStory(content, `hold`, categoryIds, true)
             message = `story contains inappropriate content: ${result.type}`
+            await profaneModel.createProfane(result.type, data.id)
+        }else{
+            data = await storyModel.createStory(content, `posted`, categoryIds, false)
+            message = `story created successfully`
         }
-
-        const data = await storyModel.createStory(content, status, categoryIds)
 
         if(req.files && req.files.length > 0){
             const saveImagesPromises = req.files.map(file => imageModel.saveImage(data.id, file.filename))
@@ -98,11 +100,9 @@ async function createStory(req, res){
             await Promise.all(saveImagesPromises)
         }
 
-        if(result.profane){
-            await storyReportModel.createStoryReport(data.id, message, true)
-        }
         const newData = await storyModel.getStoryById(data.id)
         response(201, newData, message, res)
+
     } catch(error){
         console.error(error)
         response(500, null, `failed to create story: ${error.message}`, res)

@@ -14,7 +14,8 @@ async function getAllStoriesStatus(status){
                 }
             },
             images: true,
-            comments: true
+            comments: true,
+            profanes: true
         }
     })
 }
@@ -32,7 +33,8 @@ async function getStoryByIdStatus(id, status){
                 }
             },
             images: true,
-            comments: true
+            comments: true,
+            profanes: true
         }
     })
 }
@@ -46,7 +48,8 @@ async function getAllStories(){
                 }
             },
             images: true,
-            comments: true
+            comments: true,
+            profanes: true
         }
     })
 }
@@ -63,7 +66,8 @@ async function getStoryById(id){
                 }
             },
             images: true,
-            comments: true
+            comments: true,
+            profanes: true
         }
     })
 }
@@ -84,12 +88,13 @@ async function getStoryByToken(token) {
     })
 }
 
-async function createStory(content, status, categoryIds){
+async function createStory(content, status, categoryIds, isFlagged){
     const deletionToken = crypto.randomBytes(8).toString('hex')
     return prisma.stories.create({
         data: {
             content,
             status,
+            isFlagged,
             deletion_token: deletionToken,
             story_categories: {
                 create: categoryIds.map(catId => ({

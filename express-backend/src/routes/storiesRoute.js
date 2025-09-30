@@ -16,10 +16,10 @@ app.use(express.json())
 //get all stories
 router.get('/stories', authMiddleware, storyController.getStories)
 router.get('/stories/posted', storyController.getPostedStories)
-router.get('/stories/held', authMiddleware, storyController.getHeldStories)
+router.get('/stories/flagged', authMiddleware, storyController.getFlaggedStories)
 
 //get specific story
-router.get('/stories/held/:id', authMiddleware, storyController.getStory)
+router.get('/stories/flagged/:id', authMiddleware, storyController.getStory)
 router.get('/stories/posted/:id', storyController.getPostedStory)
 router.get('/stories/delete', storyController.getStoryByToken)
 

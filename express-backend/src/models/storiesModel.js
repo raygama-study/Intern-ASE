@@ -88,6 +88,14 @@ async function getStoryByToken(token) {
     })
 }
 
+async function getFlaggedStories() {
+    return prisma.stories.findMany({
+        where: {
+            isFlagged: true
+        }
+    })
+}
+
 async function createStory(content, status, categoryIds, isFlagged){
     const deletionToken = crypto.randomBytes(8).toString('hex')
     return prisma.stories.create({
@@ -154,6 +162,7 @@ module.exports = {
     getAllStoriesStatus,
     getStoryByIdStatus,
     getStoryByToken,
+    getFlaggedStories,
     createStory,
     deleteStoryByStatus,
     updateStory,

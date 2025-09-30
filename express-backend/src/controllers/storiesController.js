@@ -54,10 +54,10 @@ async function getPostedStory(req, res){
     }
 }
 
-async function getHeldStories(req, res){
+async function getFlaggedStories(req, res){
     try{
-        const data = await storyModel.getAllStoriesStatus(`hold`)
-        response(200, data, `get held stories`, res)
+        const data = await storyModel.getFlaggedStories()
+        response(200, data, `get flagged stories`, res)
     } catch(error){
         console.error(error)
         response(500, null, `failed to get story: ${error.message}`, res)
@@ -159,7 +159,7 @@ module.exports = {
     getStory,
     getPostedStories,
     getPostedStory,
-    getHeldStories,
+    getFlaggedStories,
     getStoryByToken,
     createStory,
     deleteStoryByToken,

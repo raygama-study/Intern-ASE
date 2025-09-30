@@ -109,12 +109,36 @@ async function createStory(req, res){
     }
 }
 
+async function flagStory(req, res) {
+    try{
+        const {id} = req.params
+
+        const data = await storyModel.updateStory(id, `posted`, true)
+        response(201, data, `story flagged successfully`, res)
+    } catch(error){
+        console.error(error)
+        response(500, null, `failed to flag story`, res)
+    }
+}
+
+async function unflagStory(req, res) {
+    try{
+        const {id} = req.params
+
+        const data = await storyModel.updateStory(id, `posted`, false)
+        response(201, data, `story unflagged successfully`, res)
+    } catch(error){
+        console.error(error)
+        response(500, null, `failed to unflag story`, res)
+    }
+}
+
 async function updateStory(req, res){
     try{
         const {id} = req.params
-        const {status} = req.body
+        const {status, isFlagged} = req.body
 
-        const data = await storyModel.updateStory(id, status)
+        const data = await storyModel.updateStory(id, status, isFlagged)
         response(200, data, `story updated successfully`, res)
     } catch(error){
         console.error(error)
@@ -162,6 +186,8 @@ module.exports = {
     getFlaggedStories,
     getStoryByToken,
     createStory,
+    flagStory,
+    unflagStory,
     deleteStoryByToken,
     updateStory,
     deleteStory

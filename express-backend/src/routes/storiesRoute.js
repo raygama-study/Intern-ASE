@@ -28,9 +28,10 @@ router.post('/stories', upload.upload.array('images', 4), upload.removeExifMiddl
 
 //delete story (by status dan hard delete)
 router.put('/stories/delete', storiesValidator.deleteStoryValidator, validate, storyController.deleteStoryByToken)
-router.delete('/stories/:id/delete', authMiddleware, storyController.deleteStory)
+router.delete('/stories/:id', authMiddleware, storyController.deleteStory)
 
-//update story
-router.put('/stories/:id/edit', storiesValidator.storyValidator, validate, storyController.updateStory)
+//flag story
+router.put('/stories/posted/:id/flag', storyController.flagStory)
+router.put('/stories/flagged/:id/unflag', authMiddleware, storyController.unflagStory)
 
 module.exports = router

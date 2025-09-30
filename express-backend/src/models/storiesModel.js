@@ -92,6 +92,16 @@ async function getFlaggedStories() {
     return prisma.stories.findMany({
         where: {
             isFlagged: true
+        },
+        include: {
+            story_categories: {
+                include: {
+                    categories: true
+                }
+            },
+            images: true,
+            comments: true,
+            profanes: true
         }
     })
 }
@@ -123,14 +133,14 @@ async function createStory(content, status, categoryIds, isFlagged){
     })
 }
 
-async function updateStory(id, status){
+async function updateStory(id, status, isFlagged){
     return prisma.stories.update({
         where: {
-            id: Number(id),
-            status: 'posted'
+            id: Number(id)
         },
         data: {
-            status: status
+            status,
+            isFlagged
         }
     })
 }

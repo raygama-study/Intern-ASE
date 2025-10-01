@@ -16,16 +16,17 @@ export default function MainShareDark({ onReviewAndSubmit }) {
 
   const canSubmit = story.length >= 10;
 
+  const newLocal = <div className="pointer-events-none absolute inset-0 z-0 select-none">
+    <img src={Leaf1} alt="" aria-hidden="true" draggable="false" className="absolute w-[78px] sm:w-[90px] md:w-[130px] -top-[100px] -left-[125px] rotate-[75deg]" />
+    <img src={Leaf3} alt="" aria-hidden="true" draggable="false" className="absolute w-[80px] sm:w-[92px] md:w-[150px] -top-[50px] -right-[150px] -rotate-[130deg]" />
+    <img src={Leaf2} alt="" aria-hidden="true" draggable="false" className="absolute w-[88px] sm:w-[100px] md:w-[150px] top-[180px] -left-[120px] rotate-[115deg]" />
+    <img src={Leaf4} alt="" aria-hidden="true" draggable="false" className="absolute w-[86px] sm:w-[98px] md:w-[150px] bottom-[25px] -left-[150px] rotate-[80deg]" />
+    <img src={Leaf5} alt="" aria-hidden="true" draggable="false" className="absolute w-[92px] sm:w-[110px] md:w-[220px] bottom-[25px] -right-[130px] rotate-[100deg]" />
+  </div>;
   return (
     <main className="relative isolate bg-[#2B2521] text-[#EEE3D9] font-abhaya overflow-visible">
       {/* Leaves */}
-      <div className="pointer-events-none absolute inset-0 z-0 select-none">
-        <img src={Leaf1} alt="" aria-hidden="true" draggable="false" className="absolute w-[78px] sm:w-[90px] md:w-[130px] -top-[100px] -left-[125px] rotate-[75deg]" />
-        <img src={Leaf3} alt="" aria-hidden="true" draggable="false" className="absolute w-[80px] sm:w-[92px] md:w-[150px] -top-[50px] -right-[150px] -rotate-[130deg]" />
-        <img src={Leaf2} alt="" aria-hidden="true" draggable="false" className="absolute w-[88px] sm:w-[100px] md:w-[150px] top-[180px] -left-[120px] rotate-[115deg]" />
-        <img src={Leaf4} alt="" aria-hidden="true" draggable="false" className="absolute w-[86px] sm:w-[98px] md:w-[150px] bottom-[25px] -left-[150px] rotate-[80deg]" />
-        <img src={Leaf5} alt="" aria-hidden="true" draggable="false" className="absolute w-[92px] sm:w-[110px] md:w-[220px] bottom-[25px] -right-[130px] rotate-[100deg]" />
-      </div>
+      {newLocal}
 
       {/* Content */}
       <div className="relative z-10 max-w-[1100px] mx-auto px-4 md:px-4 py-8 md:py-1">

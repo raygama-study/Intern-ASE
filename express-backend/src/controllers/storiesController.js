@@ -1,6 +1,10 @@
 const storyModel = require('../models/storiesModel')
 const response = require('../helpers/response')
 const imageModel = require('../models/imagesModel')
+const profaneModel = require('../models/profanesModel')
+const {Filter} = require('content-checker')
+
+const filter = new Filter({openModeratorAPIKey: process.env.OPEN_MODERATOR_API_KEY})
 
 async function getStories(req, res){
     try{
@@ -28,7 +32,7 @@ async function getStory(req, res){
 
 async function getPostedStories(req, res){
     try{
-        const data = await storyModel.getAllPostedStories()
+        const data = await storyModel.getAllStoriesStatus(`posted`)
         response(200, data, `get all stories`, res)
     } catch(error){
         console.error(error)
@@ -39,7 +43,7 @@ async function getPostedStories(req, res){
 async function getPostedStory(req, res){
     try{
         const {id} = req.params
-        const data = await storyModel.getPostedStoryById(id)
+        const data = await storyModel.getStoryByIdStatus(id, `posted`)
         if(!data){
             return response(404, null, `story not found`, res)
         }
@@ -50,10 +54,45 @@ async function getPostedStory(req, res){
     }
 }
 
+async function getFlaggedStories(req, res){
+    try{
+        const data = await storyModel.getFlaggedStories()
+        response(200, data, `get flagged stories`, res)
+    } catch(error){
+        console.error(error)
+        response(500, null, `failed to get story: ${error.message}`, res)
+    }
+}
+
+async function getStoryByToken(req, res) {
+    try{
+        const {deletionToken} = req.body
+        const data = await storyModel.getStoryByToken(deletionToken)
+        if(!data || data.status != `posted`){
+            return response(404, null, `story not found`, res)
+        }
+        response(200, data, `get story with token: ${deletionToken}`, res)
+    } catch(error){
+        response(500, null, `failed to get story: ${error.message}`, res)
+    }
+}
+
 async function createStory(req, res){
     try{
-        const {content, status, categoryIds} = req.body
-        const data = await storyModel.createStory(content, status, categoryIds)
+        const {content, categoryIds = []} = req.body
+        let data
+        let message
+
+        const result = await filter.isProfaneAI(content, {provider: "google-perspective-api", checkManualProfanityList: true})
+
+        if(result.profane){
+            data = await storyModel.createStory(content, `hold`, categoryIds, true)
+            message = `story contains inappropriate content: ${result.type}`
+            await profaneModel.createProfane(result.type, data.id)
+        }else{
+            data = await storyModel.createStory(content, `posted`, categoryIds, false)
+            message = `story created successfully`
+        }
 
         if(req.files && req.files.length > 0){
             const saveImagesPromises = req.files.map(file => imageModel.saveImage(data.id, file.filename))
@@ -62,19 +101,44 @@ async function createStory(req, res){
         }
 
         const newData = await storyModel.getStoryById(data.id)
-        response(201, newData, `story created successfully`, res)
+        response(201, newData, message, res)
+
     } catch(error){
         console.error(error)
         response(500, null, `failed to create story: ${error.message}`, res)
     }
 }
 
+async function flagStory(req, res) {
+    try{
+        const {id} = req.params
+
+        const data = await storyModel.updateStory(id, `posted`, true)
+        response(201, data, `story flagged successfully`, res)
+    } catch(error){
+        console.error(error)
+        response(500, null, `failed to flag story`, res)
+    }
+}
+
+async function unflagStory(req, res) {
+    try{
+        const {id} = req.params
+
+        const data = await storyModel.updateStory(id, `posted`, false)
+        response(201, data, `story unflagged successfully`, res)
+    } catch(error){
+        console.error(error)
+        response(500, null, `failed to unflag story`, res)
+    }
+}
+
 async function updateStory(req, res){
     try{
         const {id} = req.params
-        const {status} = req.body
+        const {status, isFlagged} = req.body
 
-        const data = await storyModel.updateStory(id, status)
+        const data = await storyModel.updateStory(id, status, isFlagged)
         response(200, data, `story updated successfully`, res)
     } catch(error){
         console.error(error)
@@ -82,18 +146,15 @@ async function updateStory(req, res){
     }
 }
 
-async function deleteStoryByStatus(req, res){
+async function deleteStoryByToken(req, res){
     try{
-        const {id} = req.params
-        const deletionToken = req.body?.deletionToken;
-        if (!deletionToken) {
-            return response(400, null, `missing deletion token`, res);
+        const {deletionToken} = req.body
+
+        const data = await storyModel.getStoryByToken(deletionToken)
+        if(!data || data.status != `posted`){
+            return response(404, null, `story not found`, res)
         }
-        const data = await storyModel.getStoryById(id)
-        if(data.deletion_token != deletionToken){
-            return response(401, null, `invalid deletion token`, res)
-        }
-        await storyModel.deleteStoryByStatus(id)
+        await storyModel.deleteStoryByStatus(data.id)
         response(200, null, `story deleted successfully`, res)
     } catch(error){
         console.error(error)
@@ -122,8 +183,12 @@ module.exports = {
     getStory,
     getPostedStories,
     getPostedStory,
+    getFlaggedStories,
+    getStoryByToken,
     createStory,
-    deleteStoryByStatus,
+    flagStory,
+    unflagStory,
+    deleteStoryByToken,
     updateStory,
     deleteStory
 }

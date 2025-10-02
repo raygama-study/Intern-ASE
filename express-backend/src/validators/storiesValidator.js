@@ -1,0 +1,24 @@
+const {body} = require('express-validator')
+
+const storyValidator = [
+    body('content')
+        .notEmpty().withMessage('content is required'),
+    body('categoryIds')
+        .customSanitizer((value, {req})=>{
+            if(!req.body.categoryIds) return [];
+            return Array.isArray(req.body.categoryIds)
+                ? req.body.categoryIds
+                : [req.body.categoryIds];
+        })
+        .isArray().withMessage('categoryIds must be an array')
+]
+
+const deleteStoryValidator = [
+    body('deletionToken')
+        .notEmpty().withMessage('deletion token is required')
+]
+
+module.exports = {
+    storyValidator,
+    deleteStoryValidator
+}

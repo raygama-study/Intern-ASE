@@ -1,11 +1,11 @@
-const {PrismaClient} = require('../generated/prisma')
+const {PrismaClient} = require('@prisma/client')
 const prisma = new PrismaClient()
 const crypto = require('crypto')
 
-async function getAllPostedStories(){
+async function getAllStoriesStatus(status){
     return prisma.stories.findMany({
         where: {
-            status: 'posted'
+            status: status
         },
         include: {
             story_categories: {
@@ -13,16 +13,18 @@ async function getAllPostedStories(){
                     categories: true
                 }
             },
-            images: true
+            images: true,
+            comments: true,
+            profanes: true
         }
     })
 }
 
-async function getPostedStoryById(id){
+async function getStoryByIdStatus(id, status){
     return prisma.stories.findFirst({
         where: {
             id: Number(id),
-            status: 'posted'
+            status: status
         },
         include: {
             story_categories: {
@@ -30,7 +32,9 @@ async function getPostedStoryById(id){
                     categories: true
                 }
             },
-            images: true
+            images: true,
+            comments: true,
+            profanes: true
         }
     })
 }
@@ -43,7 +47,9 @@ async function getAllStories(){
                     categories: true
                 }
             },
-            images: true
+            images: true,
+            comments: true,
+            profanes: true
         }
     })
 }
@@ -59,17 +65,54 @@ async function getStoryById(id){
                     categories: true
                 }
             },
+            images: true,
+            comments: true,
+            profanes: true
+        }
+    })
+}
+
+async function getStoryByToken(token) {
+    return prisma.stories.findFirst({
+        where: {
+            deletion_token: token
+        },
+        include: {
+            story_categories: {
+                include: {
+                    categories: true
+                }
+            },
             images: true
         }
     })
 }
 
-async function createStory(content, status, categoryIds){
-    const deletionToken = crypto.randomBytes(4).toString('hex')
+async function getFlaggedStories() {
+    return prisma.stories.findMany({
+        where: {
+            isFlagged: true
+        },
+        include: {
+            story_categories: {
+                include: {
+                    categories: true
+                }
+            },
+            images: true,
+            comments: true,
+            profanes: true
+        }
+    })
+}
+
+async function createStory(content, status, categoryIds, isFlagged){
+    const deletionToken = crypto.randomBytes(8).toString('hex')
     return prisma.stories.create({
         data: {
             content,
             status,
+            isFlagged,
             deletion_token: deletionToken,
             story_categories: {
                 create: categoryIds.map(catId => ({
@@ -90,14 +133,14 @@ async function createStory(content, status, categoryIds){
     })
 }
 
-async function updateStory(id, status){
+async function updateStory(id, status, isFlagged){
     return prisma.stories.update({
         where: {
-            id: Number(id),
-            status: 'posted'
+            id: Number(id)
         },
         data: {
-            status: status
+            status,
+            isFlagged
         }
     })
 }
@@ -126,8 +169,10 @@ async function deleteStory(id){
 module.exports = {
     getAllStories,
     getStoryById,
-    getAllPostedStories,
-    getPostedStoryById,
+    getAllStoriesStatus,
+    getStoryByIdStatus,
+    getStoryByToken,
+    getFlaggedStories,
     createStory,
     deleteStoryByStatus,
     updateStory,

@@ -1,8 +1,5 @@
-// src/utils/api.js
-
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3030";
 
-// ===== helpers =====
 function authHeader() {
   const token = localStorage.getItem("vu:token");
   return token ? { Authorization: `Bearer ${token}` } : {};
@@ -25,7 +22,6 @@ async function handle(res, path) {
   return json?.payload?.datas ?? json;
 }
 
-// ===== generic HTTP =====
 export async function apiGet(path) {
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: { "Content-Type": "application/json", ...authHeader() },
@@ -59,7 +55,6 @@ export async function apiDelete(path) {
   return handle(res, path);
 }
 
-// ===== auth =====
 export async function loginModerator({ username, password }) {
   const res = await fetch(`${BASE_URL}/login`, {
     method: "POST",
@@ -73,7 +68,6 @@ export async function loginModerator({ username, password }) {
   return json.payload.datas; // { token, user }
 }
 
-// ===== public stories =====
 export async function fetchPostedStories() {
   return apiGet("/stories/posted");
 }
@@ -99,35 +93,29 @@ export async function submitStory({ content, images = [], categoryIds = [] }) {
 
   const res = await fetch(`${BASE_URL}/stories`, {
     method: "POST",
-    headers: { ...authHeader() }, // biasanya tidak perlu auth
+    headers: { ...authHeader() }, 
     body: fd,
   });
   return handle(res, "/stories");
 }
 
-// ===== moderator stories =====
 export async function fetchHeldStories() {
-  return apiGet("/stories/held"); // butuh auth; header dihandle di apiGet
+  return apiGet("/stories/flagged");
 }
 
-// SINGLE definition only (hapus yang lain!)
-export async function updateStoryStatus(storyId, status) {
-  // Sesuaikan dengan validator BE kamu (minimal ada content & categoryIds)
-  const body =
-    typeof status === "object"
-      ? status
-      : { content: "moderation-update", categoryIds: [], status };
-
-  return apiPut(`/stories/${storyId}/edit`, body);
+export async function unflagStory(id) {
+  return apiPut(`/stories/flagged/${id}/unflag`, {});
 }
 
-export async function escalateStory(id) {
-  return updateStoryStatus(id, "emergency");
+export async function flagPostedStory(id) {
+  return apiPut(`/stories/posted/${id}/flag`, {});
 }
 
-// ===== optional helpers =====
+export async function deleteStoryById(id) {
+  return apiDelete(`/stories/${id}`);
+}
+
 export async function fetchEmergencyStories() {
-  // Coba endpoint paling umum; kalau 404, kembalikan []
   try {
     const res = await apiGet("/stories?status=emergency");
     return Array.isArray(res) ? res : res?.items ?? [];
@@ -137,30 +125,26 @@ export async function fetchEmergencyStories() {
   }
 }
 
-// ===== helper kecil untuk coba beberapa endpoint sampai ada yang berhasil =====
 async function tryGetOne(paths) {
   for (const p of paths) {
     try {
       const data = await apiGet(p);
       return Array.isArray(data) ? data : (data?.items ?? []);
     } catch (e) {
-      // kalau 404, lanjut coba path berikutnya
       if (String(e?.message || "").includes("(404)")) continue;
-      // kalau error lain, lempar
       throw e;
     }
   }
   return [];
 }
 
-// ===== reviewed stories (history) =====
-// filter: { status: 'all' | 'approved' | 'rejected' }
+// reviewed stories (history) 
 export async function fetchReviewedStories(filter = {}) {
   const status = filter.status ?? "all";
 
   const mapItem = (it, forcedStatus) => ({
     ...it,
-    status: forcedStatus, // "Approved" | "Rejected"
+    status: forcedStatus, 
     reviewed_at: it.updated_at || it.moderated_at || it.created_at,
   });
 
@@ -181,7 +165,6 @@ export async function fetchReviewedStories(filter = {}) {
     return rejected.map((x) => mapItem(x, "Rejected"));
   }
 
-  // 'all' → gabungkan approved + rejected dan urutkan terbaru
   const [posted, rejected] = await Promise.all([
     tryGetOne([
       "/stories/reviewed?status=approved",
@@ -203,3 +186,36 @@ export async function fetchReviewedStories(filter = {}) {
     (a, b) => new Date(b.reviewed_at || 0) - new Date(a.reviewed_at || 0)
   );
 }
+
+// DELETE STORY BY TOKEN (public)
+export async function deleteStoryByDeletionToken(deletionToken) {
+  const tries = [
+    { method: "PUT",  path: "/stories/delete",       body: { deletionToken } }, 
+    { method: "POST", path: "/stories/delete-token", body: { deletionToken } }, 
+    { method: "POST", path: "/stories/delete",       body: { deletionToken } }, 
+  ];
+
+  for (const t of tries) {
+    const res = await fetch(`${BASE_URL}${t.path}`, {
+      method: t.method,
+      headers: { "Content-Type": "application/json" }, 
+      body: JSON.stringify(t.body),
+    });
+
+    if (res.ok) return true;
+    if (res.status === 404) continue;
+
+    let msg = `Request to ${t.path} failed (${res.status})`;
+    try {
+      const json = await res.json();
+      msg = json?.payload?.message || json?.message || msg;
+    } catch {}
+    throw new Error(msg);
+  }
+
+  throw new Error("No public delete-by-token endpoint was found (404).");
+}
+
+// ALIAS supaya kompatibel dgn komponen lama 
+export { flagPostedStory as flagStory };
+export { deleteStoryById as deleteStoryAsModerator };

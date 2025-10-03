@@ -1,11 +1,24 @@
 // src/Pages/Components/LandingPagesDark/HeaderDark.jsx
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search } from "lucide-react";
 import SoundIcon from "/src/assets/images/sound-dark.png";
 import ThemeIcon from "/src/assets/images/material-symbols_dark-mode-outline-rounded-dark.png";
 import LogoIcon from "/src/assets/images/material-symbols_voice-over-off-rounded.png";
 import moderator from "/src/assets/images/moderator.png";
 
 const HeaderDark = ({ onOpenLogin, onToggleTheme, onQuickExit }) => {
+  const [token, setToken] = useState("");
+  const navigate = useNavigate();
+
+  function handleTokenSubmit(e) {
+    e?.preventDefault();
+    const t = token.trim();
+    if (!t) return;
+    navigate(`/dark/comment?token=${encodeURIComponent(t)}`);
+    setToken("");
+  }
+
   return (
     <header className="w-full px-6 py-6 md:py-8 bg-[#2B2521] text-[#EEE3D9]">
       {/* Top bar */}
@@ -32,7 +45,33 @@ const HeaderDark = ({ onOpenLogin, onToggleTheme, onQuickExit }) => {
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 md:gap-4">
+          {/* Deletion token search (baru) */}
+          <form
+            onSubmit={handleTokenSubmit}
+            className="hidden sm:flex items-center gap-2"
+            aria-label="Find my story by deletion token"
+          >
+            <input
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              placeholder="Deletion token…"
+              className="h-[42px] w-[210px] md:w-[240px] rounded-[10px] px-3 bg-[#2B2521] text-[#EEE3D9]
+                         placeholder-white/50 border border-[#B36B1C]/40 focus:outline-none
+                         focus:border-[#C65C33] focus:shadow-[0_0_0_3px_rgba(198,92,51,0.25)]"
+            />
+            <button
+              type="submit"
+              className="h-[42px] px-3 rounded-[10px] bg-[#C65C33] text-white hover:opacity-95
+                         shadow-[0_8px_22px_rgba(198,92,51,0.35)] flex items-center gap-2"
+              aria-label="Search by token"
+              title="Search"
+            >
+              <Search className="w-4 h-4" />
+              <span className="hidden md:inline">Find</span>
+            </button>
+          </form>
+
           <button
             type="button"
             onClick={onOpenLogin}
@@ -51,7 +90,7 @@ const HeaderDark = ({ onOpenLogin, onToggleTheme, onQuickExit }) => {
 
           <button
             type="button"
-            onClick={onQuickExit}  // <-- pakai prop ini
+            onClick={onQuickExit}
             className="font-abhaya bg-[#C65C33] text-white px-5 py-2 rounded-[10px]
                        shadow-[0_8px_22px_rgba(198,92,51,0.35)] hover:opacity-95"
           >

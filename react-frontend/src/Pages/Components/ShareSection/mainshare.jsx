@@ -3,7 +3,6 @@ import LogoIcon from "/src/assets/images/uil_image-upload.png";
 import ShieldIcon from "/src/assets/images/shield.png";
 import note from "/src/assets/images/hugeicons_note.png";
 
-// leaves
 import Leaf1 from "/src/assets/images/daun1.png";
 import Leaf2 from "/src/assets/images/daun2.png";
 import Leaf3 from "/src/assets/images/daun3.png";
@@ -43,7 +42,6 @@ export default function MainShare({ onReviewAndSubmit }) {
           </div>
         </div>
 
-        {/* Card: story input – gradient aslimu */}
         <div
           className="rounded-[12px] p-4 shadow-[0_8px_18px_rgba(0,0,0,0.12)] border border-[#C65C33]/40"
           style={{

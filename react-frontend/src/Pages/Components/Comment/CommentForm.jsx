@@ -8,7 +8,7 @@ export default function CommentForm({ onSubmit }) {
     e?.preventDefault();
     const val = text.trim();
     if (!val) return;
-    onSubmit?.(val);          // kirim teks saja
+    onSubmit?.(val); 
     setText("");
   }
 

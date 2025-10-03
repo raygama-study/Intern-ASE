@@ -1,4 +1,3 @@
-// src/Pages/Components/Moderator/QueueItem.jsx
 import React from "react";
 import { AlertTriangle } from "lucide-react";
 
@@ -22,20 +21,11 @@ export default function QueueItem({
   excerpt,
   tags = [],
   timeAgo = "",
-  riskScore,              // number | undefined
   onApprove,
   onReject,
-  onEscalate,
   onHistory,
+  showEscalate = false, // NEW
 }) {
-  const riskTone = typeof riskScore === "number"
-    ? riskScore >= 80
-      ? "danger"
-      : riskScore >= 50
-      ? "warn"
-      : "info"
-    : undefined;
-
   return (
     <article className="bg-white rounded-[12px] border border-[#E6E0DA] p-6 shadow-[0_6px_14px_rgba(0,0,0,0.08)] mb-5">
       <div className="flex items-start justify-between gap-4">
@@ -49,9 +39,6 @@ export default function QueueItem({
         {tags.map((t, i) => (
           <Chip key={i} tone={t.tone || "default"}>{t.label}</Chip>
         ))}
-        {typeof riskScore === "number" && (
-          <Chip tone={riskTone}>Risk {Math.round(riskScore)}</Chip>
-        )}
       </div>
 
       <div className="mt-5 flex flex-wrap gap-3">
@@ -69,15 +56,16 @@ export default function QueueItem({
         >
           Reject
         </button>
-        <button
-          type="button"
-          onClick={onEscalate}
-          className={`h-[40px] px-4 rounded-[10px] font-abhaya text-white flex items-center gap-2 ${
-            riskTone === "danger" ? "bg-[#E34237]" : "bg-[#D94B43]"
-          }`}
-        >
-          <AlertTriangle className="w-4 h-4" /> Escalate Emergency
-        </button>
+
+        {showEscalate && (
+          <button
+            type="button"
+            className="h-[40px] px-4 rounded-[10px] font-abhaya text-white flex items-center gap-2 bg-[#D94B43]"
+          >
+            <AlertTriangle className="w-4 h-4" /> Escalate Emergency
+          </button>
+        )}
+
         <button
           type="button"
           onClick={onHistory}

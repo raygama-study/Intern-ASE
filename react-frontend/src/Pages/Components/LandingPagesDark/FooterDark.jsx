@@ -1,4 +1,3 @@
-// src/Pages/Components/LandingPagesDark/FooterDark.jsx
 import React from "react";
 
 const FooterDark = () => {

@@ -23,7 +23,6 @@ export default function MainDark({ onShare, onReadStories }) {
 
   return (
     <main className="relative bg-[#2B2521] text-[#EEE3D9] font-abhaya py-12 overflow-hidden">
-      {/* Leaves — samakan visibilitas/posisi dgn light */}
       <img
         src={Leaf1}
         alt=""

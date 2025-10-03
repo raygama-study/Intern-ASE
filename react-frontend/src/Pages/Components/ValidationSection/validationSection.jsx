@@ -102,7 +102,6 @@ export default function ValidationSection({ open, onClose, onConfirm, showClose 
               ))}
             </ul>
 
-            {/* Crisis box – PAKAI #F8B25999 */}
             <div
               className="w-full max-w-[1035px] box-border mx-auto min-h-[100px] rounded-[10px]
                          px-[50px] py-[40px] mb-7"

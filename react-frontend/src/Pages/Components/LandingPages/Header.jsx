@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search } from "lucide-react";
 import SoundIcon from "/src/assets/images/sound.png";
 import ThemeIcon from "/src/assets/images/moon.png";
 import LogoIcon from "/src/assets/images/material-symbols_voice-over-off-rounded.png";
 import moderator from "/src/assets/images/moderator.png";
 
 const Header = ({ onOpenLogin, onToggleTheme, isDark }) => {
+  const [token, setToken] = useState("");
+  const navigate = useNavigate();
+
+  function handleTokenSubmit(e) {
+    e?.preventDefault();
+    const t = token.trim();
+    if (!t) return;
+    navigate(`/comment?token=${encodeURIComponent(t)}`);
+    setToken("");
+  }
+
   return (
     <header className="bg-background text-darkText w-full px-6 py-6 md:py-8">
       {/* Top bar */}
@@ -30,8 +43,32 @@ const Header = ({ onOpenLogin, onToggleTheme, isDark }) => {
           </button>
         </div>
 
-        {/* Right controls: Moderator + Quick Exit */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 md:gap-4">
+          {/* Deletion token search */}
+          <form
+            onSubmit={handleTokenSubmit}
+            className="hidden sm:flex items-center gap-2"
+            aria-label="Find my story by deletion token"
+          >
+            <input
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              placeholder="Deletion token…"
+              className="h-[42px] w-[210px] md:w-[240px] rounded-[10px] px-3 bg-white text-darkText placeholder-darkText/50
+                         border border-brand-700/20 focus:outline-none
+                         focus:border-brand-700 focus:shadow-[0_0_0_3px_rgba(198,92,51,0.20)]"
+            />
+            <button
+              type="submit"
+              className="h-[42px] px-3 rounded-[10px] bg-brand-700 text-white hover:opacity-95 shadow-brand flex items-center gap-2"
+              aria-label="Search by token"
+              title="Search"
+            >
+              <Search className="w-4 h-4" />
+              <span className="hidden md:inline">Find</span>
+            </button>
+          </form>
+
           {/* Moderator Login icon button */}
           <button
             type="button"
@@ -53,6 +90,7 @@ const Header = ({ onOpenLogin, onToggleTheme, isDark }) => {
             className="font-abhaya bg-brand-700 text-white px-5 py-2 rounded-[10px]
                        shadow-brand hover:opacity-95"
             type="button"
+            onClick={() => navigate("/")}
           >
             Quick Exit
           </button>

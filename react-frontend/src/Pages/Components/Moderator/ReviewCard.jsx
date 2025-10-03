@@ -9,7 +9,6 @@ function Tag({ children }) {
 }
 
 function StatusPill({ status = "Approved" }) {
-  // bisa di-extend kalau ada Rejected/Pending
   return (
     <span className="rounded-full border border-[#CDEECD] bg-[#EAF8E8] text-[#2F7D32] px-3 py-1 text-xs font-abhaya">
       {status}

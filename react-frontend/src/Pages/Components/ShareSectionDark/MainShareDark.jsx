@@ -30,7 +30,6 @@ export default function MainShareDark({ onReviewAndSubmit }) {
 
       {/* Content */}
       <div className="relative z-10 max-w-[1100px] mx-auto px-4 md:px-4 py-8 md:py-1">
-        {/* Privacy banner – pakai accent 40% */}
         <div
           className="rounded-[12px] px-6 py-7 mb-7"
           style={{ background: "#80311366" }}
@@ -44,7 +43,6 @@ export default function MainShareDark({ onReviewAndSubmit }) {
           </div>
         </div>
 
-        {/* Card editor – dark card + warm edge */}
         <div
           className="rounded-[12px] p-4 shadow-[0_8px_18px_rgba(0,0,0,0.35)] border border-[#B36B1C]/40"
           style={{

@@ -1,4 +1,3 @@
-// src/Pages/Moderator/Dashboard.jsx
 import React, { useEffect, useState, useMemo } from "react";
 import Sidebar from "../Components/Moderator/Sidebar";
 import { ClipboardList, AlertTriangle, TrendingUp, UsersRound } from "lucide-react";
@@ -85,7 +84,7 @@ export default function ModeratorDashboard() {
   const [pending, setPending] = useState(0);
   const [emergency, setEmergency] = useState(0);
   const [approvedToday, setApprovedToday] = useState(0);
-  const [activeModerator, setActiveModerator] = useState(1); // fallback 1
+  const [activeModerator, setActiveModerator] = useState(1); 
 
   useEffect(() => {
     let cancelled = false;
@@ -95,18 +94,16 @@ export default function ModeratorDashboard() {
         // 1) Pending = jumlah HELD
         let held = [];
         try {
-          held = await fetchHeldStories(); // auth header sudah otomatis dari utils
+          held = await fetchHeldStories(); 
         } catch (e) {
-          // tahan error 404/401 biar tidak spam console
           if (String(e?.message || "").includes("(404)")) console.debug("held not available");
           else console.debug(e);
         }
         if (!cancelled) setPending(Array.isArray(held) ? held.length : 0);
 
-        // 2) Approved today = posted yang dibuat hari ini
         let posted = [];
         try {
-          posted = await fetchPostedStories(); // public endpoint
+          posted = await fetchPostedStories(); 
         } catch (e) {
           if (String(e?.message || "").includes("(404)")) console.debug("posted not available");
           else console.debug(e);
@@ -114,7 +111,6 @@ export default function ModeratorDashboard() {
         const approvedCount = (posted || []).filter((s) => isToday(s?.created_at)).length;
         if (!cancelled) setApprovedToday(approvedCount);
 
-        // 3) Emergency count — coba beberapa pola endpoint, fallback 0
         async function tryEmergency() {
           const tries = ["/stories?status=emergency", "/stories/emergency"];
           for (const path of tries) {
@@ -131,7 +127,6 @@ export default function ModeratorDashboard() {
         const emerCount = await tryEmergency();
         if (!cancelled) setEmergency(emerCount);
 
-        // 4) Active moderator — kalau belum ada endpoint, coba ambil dari /moderators/active, fallback 1
         async function tryActiveModerators() {
           const candidates = ["/moderators/active", "/moderator/active"];
           for (const path of candidates) {
@@ -161,7 +156,6 @@ export default function ModeratorDashboard() {
     };
   }, []);
 
-  // Hanya dipakai untuk demo delta string
   const deltas = useMemo(
     () => ({
       pending: "+12% From last week",

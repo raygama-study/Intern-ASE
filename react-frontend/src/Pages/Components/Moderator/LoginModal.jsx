@@ -1,4 +1,3 @@
-// src/Pages/Components/Moderator/LoginModal.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import PropTypes from "prop-types";
@@ -40,7 +39,6 @@ export default function LoginModal({ open, onClose, onLogin, theme = "light" }) 
           shadow: "0px 10px 28px rgba(0,0,0,0.20)",
         };
 
-  // Border state classes
   const baseLine =
     theme === "dark"
       ? "border-b border-[#B36B1C]/40 focus-within:border-[#C65C33] focus-within:shadow-[0_0_8px_rgba(198,92,51,.45)]"
@@ -51,7 +49,6 @@ export default function LoginModal({ open, onClose, onLogin, theme = "light" }) 
       ? "border-b border-red-400 shadow-[0_0_10px_rgba(248,113,113,.55)]"
       : "border-b border-red-500 shadow-[0_0_10px_rgba(255,59,48,.55)]";
 
-  // Input base styles
   const inputBase =
     "w-full py-3 outline-none font-abhaya text-[16px] bg-transparent caret-[#C65C33]";
   const inputTone =
@@ -70,7 +67,6 @@ export default function LoginModal({ open, onClose, onLogin, theme = "light" }) 
         password,
       });
 
-      // Persist
       localStorage.setItem("vu:token", token);
       localStorage.setItem("vu:user", JSON.stringify(userData));
       localStorage.setItem("vu:username", userData?.username || username);
@@ -84,7 +80,7 @@ export default function LoginModal({ open, onClose, onLogin, theme = "light" }) 
     }
   }
 
-  // Lock scroll + auto focus on open
+
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;

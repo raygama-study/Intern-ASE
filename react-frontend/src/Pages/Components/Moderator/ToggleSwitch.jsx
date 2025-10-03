@@ -1,18 +1,12 @@
 import React from "react";
-
-/**
- * ToggleSwitch (RGBA)
- * - Warna ON/OFF dan alpha bisa diubah lewat props.
- * - Default diset sesuai palet kamu.
- */
 export default function ToggleSwitch({
   checked,
   onChange,
   ariaLabel,
-  colorOn = "rgba(34, 32, 32, 1)",      // #C65C33 (solid)
-  colorOff = "rgba(217, 212, 206, 0.95)", // netral krem-abu (sedikit transparan)
-  thumbColor = "rgba(255, 255, 255, 1)",  // putih solid
-  focusRing = "rgba(153, 98, 76, 0.35)",  // ring saat fokus (primary 35%)
+  colorOn = "rgba(34, 32, 32, 1)",    
+  colorOff = "rgba(217, 212, 206, 0.95)", 
+  thumbColor = "rgba(255, 255, 255, 1)",  
+  focusRing = "rgba(153, 98, 76, 0.35)",  // 
 }) {
   return (
     <button

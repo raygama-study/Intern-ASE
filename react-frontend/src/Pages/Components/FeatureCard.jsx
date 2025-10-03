@@ -1,4 +1,3 @@
-// src/Pages/Components/FeatureCard.jsx
 import React from "react";
 
 export default function FeatureCard({ icon, title, description, className = "" }) {

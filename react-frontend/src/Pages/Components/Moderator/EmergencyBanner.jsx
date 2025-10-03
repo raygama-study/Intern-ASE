@@ -1,4 +1,3 @@
-// src/Pages/Components/Moderator/EmergencyBanner.jsx
 import React from "react";
 import { AlertTriangle } from "lucide-react";
 

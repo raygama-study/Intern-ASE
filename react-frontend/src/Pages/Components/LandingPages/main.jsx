@@ -19,7 +19,6 @@ export default function Main() {
 
   return (
     <main className="relative bg-background text-darkText font-abhaya py-12 overflow-hidden">
-      {/* Leaves: progressively hidden on smaller screens */}
       <img
         src={Leaf1}
         alt=""
@@ -70,7 +69,6 @@ export default function Main() {
       />
 
       <div className="container mx-auto px-4 relative z-10">
-        {/* CTA: stack on mobile, row on md+ */}
         <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-[20px] mb-12">
           <button
             onClick={() => navigate("/share")}
@@ -93,7 +91,6 @@ export default function Main() {
           </button>
         </div>
 
-        {/* Feature Cards: 1col (mobile) → 2col (sm) → 3col (lg) */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[24px] md:gap-[36px] max-w-[980px] mx-auto">
           <FeatureCard
             icon={ProtectIcon}
@@ -121,7 +118,6 @@ export default function Main() {
           />
         </section>
 
-        {/* Safety Box */}
         <div className="mt-16 w-full flex justify-center">
           <div className="group w-full max-w-[900px]">
             <div

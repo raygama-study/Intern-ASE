@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Components/LandingPages/Header";
-import Main from "./Components/LandingPages/Main";
+import Main from "./Components/LandingPages/main";
 import Footer from "./Components/LandingPages/Footer";
 import LoginModal from "./Components/Moderator/LoginModal";
 

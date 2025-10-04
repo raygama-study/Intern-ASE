@@ -1,24 +1,39 @@
-import React, { useState } from "react";
+// src/Pages/Moderator/Settings.jsx
+import React, { useEffect, useState } from "react";
 import Sidebar from "../Components/Moderator/Sidebar";
 import ToggleSwitch from "../Components/Moderator/ToggleSwitch";
 import NoticeBar from "../Components/Moderator/NoticeBar";
 import { ChevronDown } from "lucide-react";
+import { prefs } from "../../utils/prefs";
 
 export default function Settings() {
-  // state (sementara local; nanti bisa disambung API)
-  const [emergencyAlert, setEmergencyAlert] = useState(true);
-  const [dailySummary, setDailySummary] = useState(false);
-  const [soundNotif, setSoundNotif] = useState(false);
+  // init dari localStorage
+  const [emergencyAlert, setEmergencyAlert] = useState(prefs.getEmergencyAlert());
+  const [dailySummary, setDailySummary] = useState(prefs.getDailySummary());
+  const [soundNotif, setSoundNotif]   = useState(prefs.getSoundNotif());
 
-  const [assignMode, setAssignMode] = useState("balance");
-  const [dailyTarget, setDailyTarget] = useState("50");
+  const [assignMode, setAssignMode]   = useState(prefs.getAssignMode());
+  const [dailyTarget, setDailyTarget] = useState(prefs.getDailyTarget());
+
+  // pastikan jika tab/halaman lain mengubah prefs, form ikut refresh
+  useEffect(() => {
+    const unsub = (e) => {
+      const p = e.detail || prefs.getAll();
+      setEmergencyAlert(p.emergencyAlert);
+      setDailySummary(p.dailySummary);
+      setSoundNotif(p.soundNotif);
+      setAssignMode(p.assignMode);
+      setDailyTarget(p.dailyTarget);
+    };
+    window.addEventListener("vu:prefs_changed", unsub);
+    return () => window.removeEventListener("vu:prefs_changed", unsub);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-darkText flex">
       <Sidebar />
 
       <main className="flex-1 px-6 md:px-10 py-8">
-        {/* Title bar */}
         <h1 className="font-aboreto text-[26px] md:text-[30px] tracking-wide">
           MODERATOR DASHBOARD
         </h1>
@@ -26,15 +41,12 @@ export default function Settings() {
           SETTING
         </h2>
 
-        {/* 2 columns */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Notification Preferences */}
           <section className="rounded-[12px] bg-white border border-[#E6E0DA] shadow-[0_4px_12px_rgba(0,0,0,0.07)] p-6">
             <h3 className="font-aboreto text-[18px] md:text-[20px] tracking-wide mb-4">
               NOTIFICATION PREFERENCES
             </h3>
 
-            {/* Emergency Alert */}
             <div className="py-3 flex items-center justify-between border-b border-[#F0EBE6]">
               <div>
                 <p className="font-abhaya text-[16px]">Emergency Alert</p>
@@ -44,12 +56,11 @@ export default function Settings() {
               </div>
               <ToggleSwitch
                 checked={emergencyAlert}
-                onChange={setEmergencyAlert}
+                onChange={(v) => { setEmergencyAlert(v); prefs.setEmergencyAlert(v); }}
                 ariaLabel="Toggle Emergency Alert"
               />
             </div>
 
-            {/* Daily Summary */}
             <div className="py-3 flex items-center justify-between border-b border-[#F0EBE6]">
               <div>
                 <p className="font-abhaya text-[16px]">Daily Summary</p>
@@ -59,12 +70,11 @@ export default function Settings() {
               </div>
               <ToggleSwitch
                 checked={dailySummary}
-                onChange={setDailySummary}
+                onChange={(v) => { setDailySummary(v); prefs.setDailySummary(v); }}
                 ariaLabel="Toggle Daily Summary"
               />
             </div>
 
-            {/* Sound Notification */}
             <div className="py-3 flex items-center justify-between">
               <div>
                 <p className="font-abhaya text-[16px]">Sound Notification</p>
@@ -74,25 +84,23 @@ export default function Settings() {
               </div>
               <ToggleSwitch
                 checked={soundNotif}
-                onChange={setSoundNotif}
+                onChange={(v) => { setSoundNotif(v); prefs.setSoundNotif(v); }}
                 ariaLabel="Toggle Sound Notification"
               />
             </div>
           </section>
 
-          {/* Review Settings */}
           <section className="rounded-[12px] bg-white border border-[#E6E0DA] shadow-[0_4px_12px_rgba(0,0,0,0.07)] p-6">
             <h3 className="font-aboreto text-[18px] md:text-[20px] tracking-wide mb-4">
               REVIEW SETTINGS
             </h3>
 
-            {/* Auto-Assign Reviews */}
             <div className="mb-5">
               <p className="font-abhaya text-[16px] mb-2">Auto-Assign Reviews</p>
               <div className="relative">
                 <select
                   value={assignMode}
-                  onChange={(e) => setAssignMode(e.target.value)}
+                  onChange={(e) => { setAssignMode(e.target.value); prefs.setAssignMode(e.target.value); }}
                   className="w-full h-[42px] rounded-[10px] border border-[#E6E0DA] bg-white px-3 pr-10 font-abhaya appearance-none"
                 >
                   <option value="balance">Balance Assignment</option>
@@ -103,13 +111,12 @@ export default function Settings() {
               </div>
             </div>
 
-            {/* Daily Review Target */}
             <div>
               <p className="font-abhaya text-[16px] mb-2">Daily Review Target</p>
               <div className="relative">
                 <select
                   value={dailyTarget}
-                  onChange={(e) => setDailyTarget(e.target.value)}
+                  onChange={(e) => { setDailyTarget(e.target.value); prefs.setDailyTarget(e.target.value); }}
                   className="w-full h-[42px] rounded-[10px] border border-[#E6E0DA] bg-white px-3 pr-10 font-abhaya appearance-none"
                 >
                   <option value="30">30 reviews</option>
@@ -123,7 +130,6 @@ export default function Settings() {
           </section>
         </div>
 
-        {/* Notice */}
         <div className="mt-10">
           <NoticeBar />
         </div>

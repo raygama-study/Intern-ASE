@@ -1,7 +1,12 @@
+// src/Pages/Moderator/Dashboard.jsx
 import React, { useEffect, useState, useMemo } from "react";
 import Sidebar from "../Components/Moderator/Sidebar";
 import { ClipboardList, AlertTriangle, TrendingUp, UsersRound } from "lucide-react";
 import { apiGet, fetchHeldStories, fetchPostedStories } from "../../utils/api";
+import { prefs, onPrefsChange } from "../../utils/prefs"; // <— NEW
+
+// ===== Feature flag: kalau BE belum ada /moderators/active, set false
+const ENABLE_ACTIVE_MOD_CARD = false; // <= ubah ke true kalau endpoint sudah tersedia
 
 function Card({ title, value, delta, icon }) {
   return (
@@ -83,34 +88,42 @@ export default function ModeratorDashboard() {
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(0);
   const [emergency, setEmergency] = useState(0);
+  const [activeModerator, setActiveModerator] = useState(ENABLE_ACTIVE_MOD_CARD ? "…" : "N/A");
   const [approvedToday, setApprovedToday] = useState(0);
-  const [activeModerator, setActiveModerator] = useState(1); 
+
+  // === target dari Settings (prefs)
+  const [dailyTarget, setDailyTarget] = useState(Number(prefs.getDailyTarget() || "50"));
+  useEffect(() => {
+    // update real-time kalau user mengubah setting di halaman Settings
+    const off = onPrefsChange((p) => setDailyTarget(Number(p.dailyTarget || "50")));
+    return off;
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       setLoading(true);
       try {
-        // 1) Pending = jumlah HELD
+        // Pending = jumlah HELD
         let held = [];
         try {
-          held = await fetchHeldStories(); 
+          held = await fetchHeldStories();
         } catch (e) {
-          if (String(e?.message || "").includes("(404)")) console.debug("held not available");
-          else console.debug(e);
+          if (!String(e?.message || "").includes("(404)")) console.debug(e);
         }
         if (!cancelled) setPending(Array.isArray(held) ? held.length : 0);
 
+        // Approved today dari posted
         let posted = [];
         try {
-          posted = await fetchPostedStories(); 
+          posted = await fetchPostedStories();
         } catch (e) {
-          if (String(e?.message || "").includes("(404)")) console.debug("posted not available");
-          else console.debug(e);
+          if (!String(e?.message || "").includes("(404)")) console.debug(e);
         }
         const approvedCount = (posted || []).filter((s) => isToday(s?.created_at)).length;
         if (!cancelled) setApprovedToday(approvedCount);
 
+        // Emergency (opsional)
         async function tryEmergency() {
           const tries = ["/stories?status=emergency", "/stories/emergency"];
           for (const path of tries) {
@@ -127,26 +140,20 @@ export default function ModeratorDashboard() {
         const emerCount = await tryEmergency();
         if (!cancelled) setEmergency(emerCount);
 
-        async function tryActiveModerators() {
-          const candidates = ["/moderators/active", "/moderator/active"];
-          for (const path of candidates) {
-            try {
-              const res = await apiGet(path);
-              const val =
-                typeof res === "number"
-                  ? res
-                  : Array.isArray(res)
-                  ? res.length
-                  : res?.count ?? res?.total ?? null;
-              if (val != null) return val;
-            } catch (e) {
-              if (!String(e?.message || "").includes("(404)")) console.debug("active mod fetch:", e);
-            }
+        if (ENABLE_ACTIVE_MOD_CARD) {
+          try {
+            const res = await apiGet("/moderators/active");
+            const val =
+              typeof res === "number"
+                ? res
+                : Array.isArray(res)
+                ? res.length
+                : res?.count ?? res?.total ?? "—";
+            if (!cancelled) setActiveModerator(val ?? "—");
+          } catch (e) {
+            if (!cancelled) setActiveModerator("—");
           }
-          return 1;
         }
-        const act = await tryActiveModerators();
-        if (!cancelled) setActiveModerator(act);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -188,11 +195,12 @@ export default function ModeratorDashboard() {
             <Card title="Pending Reviews" value={loading ? "…" : pending} delta={deltas.pending} icon={<ClipboardList className="w-5 h-5" />} />
             <Card title="Emergency cases" value={loading ? "…" : emergency} delta={deltas.emergency} icon={<AlertTriangle className="w-5 h-5" />} />
             <Card title="Approved Today" value={loading ? "…" : approvedToday} delta={deltas.approved} icon={<TrendingUp className="w-5 h-5" />} />
-            <Card title="Active Moderator" value={loading ? "…" : activeModerator} delta={deltas.moderators} icon={<UsersRound className="w-5 h-5" />} />
+            <Card title="Active Moderator" value={activeModerator} delta={deltas.moderators} icon={<UsersRound className="w-5 h-5" />} />
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <ProgressCard approvedToday={approvedToday} />
+            {/* progress bar pakai target dari Settings/localStorage */}
+            <ProgressCard approvedToday={approvedToday} target={dailyTarget} />
             <RecentActivity />
           </div>
         </div>

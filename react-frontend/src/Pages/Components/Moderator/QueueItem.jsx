@@ -1,3 +1,4 @@
+// src/Pages/Components/Moderator/QueueItem.jsx
 import React from "react";
 import { AlertTriangle } from "lucide-react";
 
@@ -24,7 +25,9 @@ export default function QueueItem({
   onApprove,
   onReject,
   onHistory,
-  showEscalate = false, // NEW
+  showEscalate = false,
+  /** NEW: block actions while API requests running */
+  busy = false,
 }) {
   return (
     <article className="bg-white rounded-[12px] border border-[#E6E0DA] p-6 shadow-[0_6px_14px_rgba(0,0,0,0.08)] mb-5">
@@ -45,14 +48,17 @@ export default function QueueItem({
         <button
           type="button"
           onClick={onApprove}
-          className="h-[40px] px-4 rounded-[10px] bg-[#C65C33] text-white hover:opacity-95 font-abhaya"
+          disabled={busy}
+          className="h-[40px] px-4 rounded-[10px] bg-[#C65C33] text-white hover:opacity-95 font-abhaya disabled:opacity-60"
         >
           Approve
         </button>
+
         <button
           type="button"
           onClick={onReject}
-          className="h-[40px] px-4 rounded-[10px] border border-[#C65C33] text-[#C65C33] hover:bg-white/60 font-abhaya"
+          disabled={busy}
+          className="h-[40px] px-4 rounded-[10px] border border-[#C65C33] text-[#C65C33] hover:bg-white/60 font-abhaya disabled:opacity-60"
         >
           Reject
         </button>
@@ -60,7 +66,8 @@ export default function QueueItem({
         {showEscalate && (
           <button
             type="button"
-            className="h-[40px] px-4 rounded-[10px] font-abhaya text-white flex items-center gap-2 bg-[#D94B43]"
+            disabled={busy}
+            className="h-[40px] px-4 rounded-[10px] font-abhaya text-white flex items-center gap-2 bg-[#D94B43] disabled:opacity-60"
           >
             <AlertTriangle className="w-4 h-4" /> Escalate Emergency
           </button>
@@ -69,7 +76,8 @@ export default function QueueItem({
         <button
           type="button"
           onClick={onHistory}
-          className="h-[40px] px-4 rounded-[10px] border border-[#E6E0DA] hover:bg-white/60 font-abhaya"
+          disabled={busy}
+          className="h-[40px] px-4 rounded-[10px] border border-[#E6E0DA] hover:bg-white/60 font-abhaya disabled:opacity-60"
         >
           View Full History
         </button>

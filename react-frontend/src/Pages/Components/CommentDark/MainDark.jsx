@@ -1,3 +1,4 @@
+// src/Pages/Components/CommentDark/MainDark.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import FilterTabsDark from "./FilterTabsDark";
@@ -18,51 +19,29 @@ import {
 } from "../../../utils/api";
 import { fromNow } from "../../../utils/time";
 import TokenDeletionBannerDark from "../CommentDark/TokenDeletionBannerDark";
+import { isUnsafeText } from "../../../utils/moderation"; // ⬅️ FE AI filter
 
-// --- helper kecil ---
 function uniq(arr) {
-  return [...new Set(arr.filter(Boolean))];
+  return [...new Set((arr || []).filter(Boolean))];
 }
 function pickTime(x) {
-  return new Date(
-    x?.created_at || x?.createdAt || x?.time || x?.date || 0
-  ).getTime();
+  return new Date(x?.created_at || x?.createdAt || x?.time || x?.date || 0).getTime();
 }
 
-// Klasifikasi dengan sinyal BE (fallback regex)
+// klasifikasi ringan kombinasi sinyal BE + regex
 function categorizeWithAI(s = {}) {
   const text = String(s?.content || "").toLowerCase();
-  const tagsRaw =
-    s?.moderation?.tags ||
-    s?.moderation?.labels ||
-    s?.tags ||
-    [];
-  const tags = (Array.isArray(tagsRaw) ? tagsRaw : [tagsRaw])
-    .map((t) => String(t || "").toLowerCase());
+  const tagsRaw = s?.moderation?.tags || s?.moderation?.labels || s?.tags || [];
+  const tags = (Array.isArray(tagsRaw) ? tagsRaw : [tagsRaw]).map((t) => String(t || "").toLowerCase());
 
   let topics = [];
+  if (tags.some((t) => /suicide|self[-\s]?harm|bunuh|akhiri|mengakhiri/.test(t))) topics.push("Suicide/Self-harm");
+  if (tags.some((t) => /violence|abuse|assault|rape|pemerkosaan|kekerasan/.test(t))) topics.push("Violence/Abuse");
+  if (tags.some((t) => /emergency|danger|threat|darurat|ancaman/.test(t))) topics.push("Immediate danger");
 
-  // dari tags BE
-  if (tags.some((t) => /suicide|self[-\s]?harm|bunuh|akhiri|mengakhiri/.test(t))) {
-    topics.push("Suicide/Self-harm");
-  }
-  if (tags.some((t) => /violence|abuse|assault|rape|pemerkosaan|kekerasan/.test(t))) {
-    topics.push("Violence/Abuse");
-  }
-  if (tags.some((t) => /emergency|danger|threat|darurat|ancaman/.test(t))) {
-    topics.push("Immediate danger");
-  }
-
-  // fallback regex pada teks
-  if (/(suicide|kill myself|end my life|self[-\s]?harm|bunuh diri|akhiri hidup|mengakhiri hidup)/.test(text)) {
-    topics.push("Suicide/Self-harm");
-  }
-  if (/(violence|abuse|assault|pemukulan|kekerasan|pemerkosaan|rape)/.test(text)) {
-    topics.push("Violence/Abuse");
-  }
-  if (/(emergency|danger|darurat|ancaman|threat)/.test(text)) {
-    topics.push("Immediate danger");
-  }
+  if (/(suicide|kill myself|end my life|self[-\s]?harm|bunuh diri|akhiri hidup|mengakhiri hidup)/.test(text)) topics.push("Suicide/Self-harm");
+  if (/(violence|abuse|assault|pemukulan|kekerasan|pemerkosaan|rape)/.test(text)) topics.push("Violence/Abuse");
+  if (/(emergency|danger|darurat|ancaman|threat)/.test(text)) topics.push("Immediate danger");
 
   const flagged =
     Boolean(s?.is_sensitive) ||
@@ -104,7 +83,6 @@ export default function MainDark() {
           try {
             const raw = await fetchCommentsByStory(s.id);
             const arr = Array.isArray(raw) ? raw : (raw?.items ?? []);
-            // newest first
             map[s.id] = arr.slice().sort((a, b) => pickTime(b) - pickTime(a));
           } catch {
             map[s.id] = [];
@@ -121,7 +99,6 @@ export default function MainDark() {
     })();
   }, []);
 
-  // tempel meta sensitif + terapkan filter Safe Content
   const viewStories = useMemo(() => {
     return (stories || [])
       .map((s) => ({ ...s, _meta: categorizeWithAI(s) }))
@@ -129,15 +106,28 @@ export default function MainDark() {
   }, [stories, safeOnly]);
 
   async function handleSubmitComment(storyId, text) {
-    if (!text?.trim()) return;
+    const val = text?.trim();
+    if (!val) return;
+
+    // FE AI filter — blok sebelum kirim ke BE
+    const chk = isUnsafeText(val);
+    if (chk.blocked) {
+      alert(chk.reason || "Komentarmu melanggar pedoman dan tidak diposting.");
+      return;
+    }
+
     try {
-      const c = await createComment(storyId, text.trim());
+      const c = await createComment(storyId, val);
       setCommentsMap((prev) => ({
         ...prev,
         [storyId]: [c, ...(prev[storyId] || [])],
       }));
     } catch (err) {
-      alert(err.message || "Failed to post comment");
+      const raw = String(err?.message || "");
+      const human = /profan|toxic|unsafe|harm|dilarang|tidak pantas|bahaya/i.test(raw)
+        ? "Komentarmu melanggar pedoman (bahasa tidak pantas/berbahaya) dan tidak diposting."
+        : (raw || "Failed to post comment");
+      alert(human);
     }
   }
 
@@ -157,6 +147,7 @@ export default function MainDark() {
         <TokenDeletionBannerDark token={tokenQ} onClose={() => setShowBanner(false)} />
       )}
 
+      {/* Leaves */}
       <div className="pointer-events-none absolute inset-0 -z-10 select-none">
         <img src={Leaf1} alt="" aria-hidden draggable="false"
              className="absolute w-[78px] sm:w-[90px] md:w-[130px] -top-[100px] -left-[100px] rotate-[90deg]" />
